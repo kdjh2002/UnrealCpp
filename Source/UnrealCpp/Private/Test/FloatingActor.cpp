@@ -28,8 +28,8 @@ void AFloatingActor::OnFloatingMeshUpdate(float DeltaTime)
 {
 	//BodyMesh->AddRelativeLocation(DeltaTime * Speed * FVector::UpVector);
 
-	//if (BodyMesh->GetRelativeLocation().Z > MoveHeight
-	//	|| BodyMesh->GetRelativeLocation().Z < 0)
+	//if (BodyMesh->GetRelativeLocation().Z > MoveHeight		//메쉬의 z값이 최대높이보다 높을때
+	//	|| BodyMesh->GetRelativeLocation().Z < 0)				//혹은 시작값0 보다 작을때
 	//{
 	//	Speed *= -1.0f;
 	//}
