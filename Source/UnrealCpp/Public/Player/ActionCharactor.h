@@ -39,6 +39,18 @@ public:
 protected:
 
 	void OnMoveInput(const FInputActionValue& InValue);
+
+
+protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Camera")
+	TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Camera")
+	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
+	//TObjectPtr<USpringArmComponent> a = nullptr;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction>IA_Move;
 };
