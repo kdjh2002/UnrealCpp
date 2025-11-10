@@ -2,9 +2,9 @@
 
 
 #include "Player/ActionPlayerController.h"
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
 #include "InputMappingContext.h"
-
 
 void AActionPlayerController::BeginPlay()
 {
@@ -12,9 +12,31 @@ void AActionPlayerController::BeginPlay()
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-
 	if (Subsystem)	//Subsystem의 null이 아니면
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, GameInputPriority);
 	}
+	PlayerCameraManager->ViewPitchMax = VewPitchMax;
+	PlayerCameraManager->ViewPitchMin = VewPitchMin; //움직이는 각도 제한
+}
+
+void AActionPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	UEnhancedInputComponent* enhanced = Cast<UEnhancedInputComponent>(InputComponent);
+	if (enhanced)	// 입력 컴포넌트가 향상된 입력 컴포넌트일 때
+	{
+		UE_LOG(LogTemp, Log, TEXT("바인드 성공"));
+		enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AActionPlayerController::OnLookInput);
+		//enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, "OnLookInput");
+	}
+}
+
+void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
+{
+	FVector2D lookAxis = InValue.Get<FVector2D>();
+	UE_LOG(LogTemp, Log, TEXT("OnLookInput : %s"), *lookAxis.ToString());
+	AddYawInput(lookAxis.X);
+	AddPitchInput(lookAxis.Y);
 }

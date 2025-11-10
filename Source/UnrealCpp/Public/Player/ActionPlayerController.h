@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-
+#include "InputActionValue.h"
 #include "ActionPlayerController.generated.h"
 
 
+class UInputAction; //전방선언
 class UInputMappingContext; //UInput~ 라는 클래스가 있다고 알려주는 역할
 /**
- * 
+*
+* 
  */
 UCLASS()
 class UNREALCPP_API AActionPlayerController : public APlayerController
@@ -20,13 +22,25 @@ class UNREALCPP_API AActionPlayerController : public APlayerController
 	//UInputMappingContext a; //전방 선언한 것은 헤더가 없으면 인스턴스를 만들 수 없다.
 	//UInputMappingContext* b; //전방 선언한 것의 주소는 저장 할 수 있다.
 
-
 protected:
-
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadOnly, Category = "Input")		//가비지컬렉팅 or 블루프린트에서 사용
-		TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
+public:
+	virtual void SetupInputComponent() override;
+
+private:
+	void OnLookInput(const FInputActionValue& InValue);
+
+protected: 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction>IA_Look;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Pitch")
+	float VewPitchMax = 30;
+	float VewPitchMin = -40;
 
 private:
 	int32 GameInputPriority = 1;

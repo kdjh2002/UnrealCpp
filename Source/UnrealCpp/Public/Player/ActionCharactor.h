@@ -8,7 +8,7 @@
 #include "ActionCharactor.generated.h"	//ㅁㅈㄱ 마지ㅏㅁㄱ
 
 
-class UInputAction;
+class UInputAction; 
 
 UCLASS()
 class UNREALCPP_API AActionCharactor : public ACharacter
