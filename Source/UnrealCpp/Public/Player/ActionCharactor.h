@@ -37,8 +37,14 @@ public:
 
 
 protected:
-
+	//입력 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
+
+	//달리기 모드 설정
+	void SetSprintMode();
+
+	//걷기 모드 설정
+	void SetWalkMode();
 
 
 protected:
@@ -50,7 +56,18 @@ protected:
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
 	//TObjectPtr<USpringArmComponent> a = nullptr;
 
+	//인풋 액션들 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction>IA_Move = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction>IA_Move;
+	TObjectPtr<UInputAction>IA_Sprint = nullptr;
+
+	//달리기 속도
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Player|Movement")
+	float SprintSpeed = 1200.0f;//BS_Move에서 그래프 최대 길이로 맞추기
+
+	//걷기 속도
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
+	float WalkSpeed = 600.0f;//BS_Move에서 그래프 최대 길이로 맞추기
 };

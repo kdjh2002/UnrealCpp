@@ -54,6 +54,15 @@ void AActionCharactor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		enhanced->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharactor::OnMoveInput);
 		//AActioncharacter(주소):: 함수
+		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Started,
+			[this](const FInputActionValue& _) {
+				SetSprintMode();
+			});
+		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
+			[this](const FInputActionValue& _) {
+				SetWalkMode();
+			});
+
 	}
 
 }
@@ -75,5 +84,23 @@ void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 	a.RotateVector*/
 
 
-	AddMovementInput(moveDirection); 
+	AddMovementInput(moveDirection);
+
+
+
+
+}
+
+void AActionCharactor::SetSprintMode()
+{
+	UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+}
+
+void AActionCharactor::SetWalkMode()
+{
+	UE_LOG(LogTemp, Warning, TEXT("걷기 모드"));
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+
+
 }
