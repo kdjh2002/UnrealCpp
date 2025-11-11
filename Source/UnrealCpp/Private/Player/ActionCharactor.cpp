@@ -23,7 +23,7 @@ AActionCharactor::AActionCharactor()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
-	bUseControllerRotationYaw = false;	//컨트롤러의 Yaw회전을 사용안함
+	bUseControllerRotationYaw = false;	//컨트롤러의 Yaw회전을 사용함 -> 컨트롤러의 yaw회전을 캐릭터에 적용
 	
 	GetCharacterMovement()->bOrientRotationToMovement = true;	//이동방향을 바라보게회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);
@@ -64,8 +64,16 @@ void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 	UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
 	UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
 
-	
 	//실습1. 좌우이동 메쉬움직이기
 	FVector moveDirection(inputDirection.Y, inputDirection.X, 0.0f);
-	AddMovementInput(moveDirection);
+
+	///실습3 카메라대로 움직이게하기
+	FQuat controlYawRotation = FQuat(FRotator(0, GetControlRotation().Yaw, 0)); //컨트롤러의 yaw회전을 따로 뽑아와스
+	moveDirection = controlYawRotation.RotateVector(moveDirection); //이동 방향에 적용
+
+	/*FRotator a;
+	a.RotateVector*/
+
+
+	AddMovementInput(moveDirection); 
 }
