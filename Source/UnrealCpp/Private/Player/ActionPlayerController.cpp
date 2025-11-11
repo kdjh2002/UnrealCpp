@@ -27,7 +27,7 @@ void AActionPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* enhanced = Cast<UEnhancedInputComponent>(InputComponent);
 	if (enhanced)	// 입력 컴포넌트가 향상된 입력 컴포넌트일 때
 	{
-		UE_LOG(LogTemp, Log, TEXT("바인드 성공"));
+		//UE_LOG(LogTemp, Log, TEXT("바인드 성공"));
 		enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AActionPlayerController::OnLookInput);
 		//enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, "OnLookInput");
 	}
@@ -36,7 +36,7 @@ void AActionPlayerController::SetupInputComponent()
 void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
 {
 	FVector2D lookAxis = InValue.Get<FVector2D>();
-	UE_LOG(LogTemp, Log, TEXT("OnLookInput : %s"), *lookAxis.ToString());
+	//UE_LOG(LogTemp, Log, TEXT("OnLookInput : %s"), *lookAxis.ToString());
 	AddYawInput(lookAxis.X);
 	AddPitchInput(lookAxis.Y);
 }
