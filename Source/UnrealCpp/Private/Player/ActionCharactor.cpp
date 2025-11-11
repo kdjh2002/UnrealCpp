@@ -24,7 +24,6 @@ AActionCharactor::AActionCharactor()
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
 	bUseControllerRotationYaw = false;	//컨트롤러의 Yaw회전을 사용함 -> 컨트롤러의 yaw회전을 캐릭터에 적용
-	
 	GetCharacterMovement()->bOrientRotationToMovement = true;	//이동방향을 바라보게회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);
 
@@ -34,6 +33,8 @@ AActionCharactor::AActionCharactor()
 void AActionCharactor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
 	
 }
 
@@ -62,9 +63,8 @@ void AActionCharactor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			[this](const FInputActionValue& _) {
 				SetWalkMode();
 			});
-
+		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharactor::OnRollInput);
 	}
-
 }
 
 void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
@@ -89,6 +89,21 @@ void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 
 
 
+}
+
+void AActionCharactor::OnRollInput(const FInputActionValue& InValue)
+{
+	if (AnimInstance.IsValid())
+	{
+		if (!AnimInstance->IsAnyMontagePlaying())
+		{
+			if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
+			{
+				SetActorRotation(GetLastMovementInputVector().Rotation()); //구르기 컨트롤  //마지막 입력방향으로 회전 시키기
+			}
+				PlayAnimMontage(RollMontage);
+		}
+	}
 }
 
 void AActionCharactor::SetSprintMode()

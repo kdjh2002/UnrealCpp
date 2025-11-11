@@ -23,7 +23,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -39,6 +39,9 @@ public:
 protected:
 	//입력 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
+
+	//구르기 입력 받기
+	void OnRollInput(const FInputActionValue& InValue);
 
 	//달리기 모드 설정
 	void SetSprintMode();
@@ -63,11 +66,25 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction>IA_Sprint = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction>IA_Roll = nullptr;
+
+
 	//달리기 속도
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Player|Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float SprintSpeed = 1200.0f;//BS_Move에서 그래프 최대 길이로 맞추기
 
 	//걷기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float WalkSpeed = 600.0f;//BS_Move에서 그래프 최대 길이로 맞추기
+
+	//구르기 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
+	//UAnimMontage* //이것도 가능
+	TObjectPtr<UAnimMontage>RollMontage = nullptr;
+
+private:
+	UPROPERTY()
+	TWeakObjectPtr<UAnimInstance>AnimInstance = nullptr;
+ 
 };
