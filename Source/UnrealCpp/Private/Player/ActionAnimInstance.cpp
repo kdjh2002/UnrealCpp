@@ -33,7 +33,7 @@ void UActionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		/*const UPawnMovementComponent* movement = OwnerMovementComponent.Get();
 		Speed = movement->Velocity.Size();*/
 		Speed = OwnerMovementComponent.Get()->Velocity.Size();
-		UE_LOG(LogTemp, Log, TEXT("Speed : %.1f"), Speed);
+		//UE_LOG(LogTemp, Log, TEXT("Speed : %.1f"), Speed);
 
 	}
 

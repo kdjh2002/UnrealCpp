@@ -35,6 +35,9 @@ void AActionCharactor::BeginPlay()
 	Super::BeginPlay();
 
 	AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
+	CurrentStamina = MAXStamina; //시작에 스테미나 맥스로 채우기
+	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina); 
+
 	
 }
 
@@ -43,6 +46,7 @@ void AActionCharactor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CheckMove();
 }
 
 // Called to bind functionality to input
@@ -53,16 +57,27 @@ void AActionCharactor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* enhanced = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (enhanced)	//입력 컴포넌트가 향상된 입력 컴포넌트 일때
 	{
+		//IA_Move
 		enhanced->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AActionCharactor::OnMoveInput);
 		//AActioncharacter(주소):: 함수
+
+		//IA_Sprint
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Started,
-			[this](const FInputActionValue& _) {
-				SetSprintMode();
-			});
+				[this](const FInputActionValue& _) {
+					SetSprintMode();
+				});
+		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Triggered, //누르고있을떄
+				[this](const FInputActionValue& _) {
+					CurrentStamina -= 1.0f; //매 프레임마다 1만큼 깎이기
+					UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+
+				});
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
-			[this](const FInputActionValue& _) {
-				SetWalkMode();
-			});
+				[this](const FInputActionValue& _) {
+					SetWalkMode();
+				});
+
+			//IA_Roll
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharactor::OnRollInput);
 	}
 }
@@ -70,8 +85,8 @@ void AActionCharactor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 {
 	FVector2D inputDirection = InValue.Get<FVector2D>();
-	UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
-	UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
+	//UE_LOG(LogTemp, Log, TEXT("Dir : (%.1f, %.1f)"), inputDirection.X, inputDirection.Y);
+	//UE_LOG(LogTemp, Log, TEXT("Dir : (%s)"), *inputDirection.ToString());
 
 	//실습1. 좌우이동 메쉬움직이기
 	FVector moveDirection(inputDirection.Y, inputDirection.X, 0.0f);
@@ -85,31 +100,40 @@ void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 
 
 	AddMovementInput(moveDirection);
-
-
-
-
 }
 
 void AActionCharactor::OnRollInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid())
+	if(CurrentStamina < 20.0f)
+	{	
+	SetWalkMode();
+	}
+	else 
 	{
-		if (!AnimInstance->IsAnyMontagePlaying())
+		if (AnimInstance.IsValid())
 		{
-			if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
+			if (!AnimInstance->IsAnyMontagePlaying())
 			{
-				SetActorRotation(GetLastMovementInputVector().Rotation()); //구르기 컨트롤  //마지막 입력방향으로 회전 시키기
-			}
+				if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
+				{
+					SetActorRotation(GetLastMovementInputVector().Rotation()); //구르기 컨트롤  //마지막 입력방향으로 회전 시키기
+				}
 				PlayAnimMontage(RollMontage);
+				CurrentStamina -= 10.0f; //매 프레임마다 1만큼 깎이기
+				UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+
+			}
 		}
 	}
 }
 
 void AActionCharactor::SetSprintMode()
 {
-	UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
+
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
+	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+
 }
 
 void AActionCharactor::SetWalkMode()
@@ -119,3 +143,23 @@ void AActionCharactor::SetWalkMode()
 
 
 }
+
+void AActionCharactor::CheckMove()
+{
+	CurrentStamina = FMath::Clamp(CurrentStamina, -0.0f, MAXStamina);
+
+	if (CurrentStamina <= 0)
+	{
+		SetWalkMode();
+		CanMove = false;
+	}
+	else
+	{
+		CanMove = true;
+	}
+	CurrentStamina += 0.5f; //매 프레임마다 1만큼 깎이기
+	UE_LOG(LogTemp, Warning, TEXT("CanMove : %d"), CanMove);
+	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+}
+
+

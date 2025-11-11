@@ -49,6 +49,9 @@ protected:
 	//걷기 모드 설정
 	void SetWalkMode();
 
+	//스테미너 확인
+	void CheckMove();
+
 
 protected:
 
@@ -70,13 +73,22 @@ protected:
 	TObjectPtr<UInputAction>IA_Roll = nullptr;
 
 
+	//움직이기 T/F
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
+	bool CanMove = true;//canmove가 True여야 가능
+
 	//달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
 	float SprintSpeed = 1200.0f;//BS_Move에서 그래프 최대 길이로 맞추기
-
 	//걷기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
-	float WalkSpeed = 600.0f;//BS_Move에서 그래프 최대 길이로 맞추기
+	float WalkSpeed = 600.0f;//BS_Move에서 그래프 반길이로 맞춤
+
+	//최대 스테미너
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Movement")
+	float MAXStamina = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Movement")
+	float CurrentStamina = 0.0f;
 
 	//구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
