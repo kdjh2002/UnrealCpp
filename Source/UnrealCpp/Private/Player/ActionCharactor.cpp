@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Player/ResourceComponent.h"
+
 
 // Sets default values
 AActionCharactor::AActionCharactor()
@@ -23,6 +25,8 @@ AActionCharactor::AActionCharactor()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
 
+	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
+
 	bUseControllerRotationYaw = false;	//컨트롤러의 Yaw회전을 사용함 -> 컨트롤러의 yaw회전을 캐릭터에 적용
 	GetCharacterMovement()->bOrientRotationToMovement = true;	//이동방향을 바라보게회전
 	GetCharacterMovement()->RotationRate = FRotator(0, 360, 0);
@@ -33,12 +37,19 @@ AActionCharactor::AActionCharactor()
 void AActionCharactor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
-	CurrentStamina = MAXStamina; //시작에 스테미나 맥스로 채우기
-	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina); 
-
 	
+	if (GetMesh())
+	{
+
+		AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
+	}
+	if (Resource)
+	{
+		Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
+	}
+	//게임 진행 중에 자주 변경되는 값은 시작 시점에서 리셋을 해줌
+	bIsSprint = true;
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina); 
 }
 
 // Called every frame
@@ -46,7 +57,13 @@ void AActionCharactor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckMove();
+	//CheckMove();
+
+	if (bIsSprint && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
+	{
+		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
+
+	}
 }
 
 // Called to bind functionality to input
@@ -66,12 +83,12 @@ void AActionCharactor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 				[this](const FInputActionValue& _) {
 					SetSprintMode();
 				});
-		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Triggered, //누르고있을떄
-				[this](const FInputActionValue& _) {
-					CurrentStamina -= 1.0f; //매 프레임마다 1만큼 깎이기
-					UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+		//enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Triggered, //누르고있을떄
+		//		[this](const FInputActionValue& _) {
+		//			//CurrentStamina -= 1.0f; //매 프레임마다 1만큼 깎이기
+		//			//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
 
-				});
+		//		});
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
 				[this](const FInputActionValue& _) {
 					SetWalkMode();
@@ -104,35 +121,33 @@ void AActionCharactor::OnMoveInput(const FInputActionValue& InValue)
 
 void AActionCharactor::OnRollInput(const FInputActionValue& InValue)
 {
-	if(CurrentStamina < 20.0f)
-	{	
-	SetWalkMode();
-	}
-	else 
-	{
 		if (AnimInstance.IsValid())
 		{
-			if (!AnimInstance->IsAnyMontagePlaying())
+			if (!AnimInstance->IsAnyMontagePlaying() //&& CurrentStamina > RollStaminaCost()
+				&& Resource->HasEnoughStamina(RollStaminaCost))	// 몽타주 재생중이 아니고 충분한 스태미너가 있을 때만 작동
 			{
-				if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
-				{
-					SetActorRotation(GetLastMovementInputVector().Rotation()); //구르기 컨트롤  //마지막 입력방향으로 회전 시키기
-				}
+				//if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
+				//{
+				//	SetActorRotation(GetLastMovementInputVector().Rotation()); //구르기 컨트롤  //마지막 입력방향으로 회전 시키기
+				//}
+				//Current -= RollStaminaCost
+				//StaminaRegenTimerSet();
+				Resource->AddStamina(-RollStaminaCost);// -= 10.0f; //매 프레임마다 1만큼 깎이기
 				PlayAnimMontage(RollMontage);
-				CurrentStamina -= 10.0f; //매 프레임마다 1만큼 깎이기
-				UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+			//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
 
 			}
 		}
-	}
 }
+
 
 void AActionCharactor::SetSprintMode()
 {
 
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
-	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+	bIsSprint = true;
 
 }
 
@@ -140,26 +155,30 @@ void AActionCharactor::SetWalkMode()
 {
 	UE_LOG(LogTemp, Warning, TEXT("걷기 모드"));
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	bIsSprint = false;
 
 
 }
 
-void AActionCharactor::CheckMove()
-{
-	CurrentStamina = FMath::Clamp(CurrentStamina, -0.0f, MAXStamina);
+//void AActionCharactor::CheckMove()
+//{
+//	CurrentStamina = FMath::Clamp(CurrentStamina, -0.0f, MAXStamina);
+//
+//	if (CurrentStamina <= 0)
+//	{
+//		SetWalkMode();
+//		bIsSprint = false;
+//	}
+//	else
+//	{
+//		bIsSprint = true;
+//	}
+//	CurrentStamina += 0.5f; //매 프레임마다 1만큼 깎이기
+//	UE_LOG(LogTemp, Warning, TEXT("IsSprint : %d"), bIsSprint);
+//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+//}
 
-	if (CurrentStamina <= 0)
-	{
-		SetWalkMode();
-		CanMove = false;
-	}
-	else
-	{
-		CanMove = true;
-	}
-	CurrentStamina += 0.5f; //매 프레임마다 1만큼 깎이기
-	UE_LOG(LogTemp, Warning, TEXT("CanMove : %d"), CanMove);
-	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
-}
+
+
 
 
