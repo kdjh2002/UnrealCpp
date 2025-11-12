@@ -13,15 +13,15 @@ UCLASS()
 class UNREALCPP_API UMainHUDWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
-public:
+	void NativeConstruct();
 
 protected:
-	void NativeConstruct();
+	virtual void NativeConstruct() override;
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TObjectPtr<class UResourceBarWidget> HealthBar;
+	TWeakObjectPtr<class UResourceBarWidget> HealthBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TObjectPtr<class UResourceBarWidget> StaminaBar;
-	
+	TWeakObjectPtr<class UResourceBarWidget> StaminaBar;
 };

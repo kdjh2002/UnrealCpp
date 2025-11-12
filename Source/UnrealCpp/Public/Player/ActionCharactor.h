@@ -9,6 +9,8 @@
 
 
 class UInputAction; 
+//class USpringArmComponent;
+class UResourceComponent;
 
 UCLASS()
 class UNREALCPP_API AActionCharactor : public ACharacter
@@ -29,6 +31,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UResourceComponent* GetResourceComponent() { return Resource; }
 
 
 public:
