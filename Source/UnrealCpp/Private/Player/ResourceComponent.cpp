@@ -78,9 +78,12 @@ void UResourceComponent::AddStamina(float InValue)
 		// 스태미너 변경 처리
 	SetCurrentStamina(FMath::Clamp(CurrentStamina + InValue, 0, MaxStamina));
 
+	if (InValue < 0)
+	{
 	//스테미너를 소비하고 일정 시간 뒤에 자동생성되게 타이머 세팅
 	StaminaAutoRegenCoolTimerSet();
 
+	}
 
 	//CurrentStamina = FMath::Clamp(CurrentStamina, 0, MaxStamina);
 	//OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
@@ -102,6 +105,7 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 	FTimerManager& timerManager = world->GetTimerManager();
 
 //GetWorldTimerManager().ClearTimer(StaminaCoolTimer);	// 해서 나쁠 것은 없음(SetTimer할 때 이미 내부적으로 처리하고 있다)
+	timerManager.ClearTimer(StaminaRegenTickTimer);
 	timerManager.SetTimer(
 		StaminaAutoRegenCoolTimer,	//StaminaAutoRegenCoolTimer핸들에 연결된 타이머세팅. (StaminaRegenCoolTime초 후에 한번만 람다식을 실행하는 타이머
 		[this]() {
@@ -113,9 +117,11 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 			//	StaminaTickInterval시간간격으로
 			//	이 클래스의 staminaRegenPerTick함수를 실행하는 타이머
 
+			
 			UWorld* world = GetWorld();
 			FTimerManager& timerManager = world->GetTimerManager();
-			timerManager.SetTimer(
+			//지속적으로 회복
+			timerManager.SetTimer(		
 				StaminaRegenTickTimer,	
 				this,
 				&UResourceComponent::StaminaRegenPerTick,

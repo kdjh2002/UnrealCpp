@@ -102,6 +102,8 @@ private:
 	};
 	inline void SetCurrentStamina(float InValue) {
 		CurrentStamina = InValue;
+		//UE_LOG(LogTemp, Warning, TEXT("Stamina : %.1f"), CurrentStamina);
+
 		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
 	};
 

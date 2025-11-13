@@ -57,13 +57,12 @@ void AActionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//UE_LOG(LogTemp, Warning, TEXT("Velocity : %s"), GetVelocity().ToString());
+
+
 	//CheckMove();
 
-	if (bIsSprint && !GetVelocity().IsNearlyZero())	// 달리기 모드인 상태에서 움직이면 스태미너를 소비한다.
-	{
-		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
-
-	}
+	StandRunStamina(DeltaTime);
 }
 
 // Called to bind functionality to input

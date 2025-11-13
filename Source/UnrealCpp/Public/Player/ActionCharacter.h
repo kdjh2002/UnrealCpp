@@ -67,7 +67,11 @@ protected:
 	//void CheckMove();
 
 private:
+	//콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
+
+	//달리기용 스테미너 소비함수
+	void StandRunStamina();
 
 protected:
 
