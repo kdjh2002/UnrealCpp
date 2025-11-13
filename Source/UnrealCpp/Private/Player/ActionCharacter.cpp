@@ -40,7 +40,6 @@ void AActionCharacter::BeginPlay()
 	
 	if (GetMesh())
 	{
-
 		AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
 	}
 	if (Resource)
@@ -225,6 +224,8 @@ void AActionCharacter::StandRunStamina(float DeltaTime)
 		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
 
 	}
+
+	//GetWorld()->GetFirst
 }
 
 //void AActionCharactor::CheckMove()
