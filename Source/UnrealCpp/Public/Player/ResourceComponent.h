@@ -64,9 +64,17 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	inline bool IsAlive() { return CurrentHealth > 0; }
 
+	inline float GetCurrentHealth() const { return CurrentHealth; }
+	inline float GetMaxHealth() const { return MaxHealth; }
+
+
 	//스테미너가 충분한지 확인하는 함수
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	inline bool HasEnoughStamina(float InValue) { return CurrentStamina >= InValue; }
+
+
+	inline float GetCurrentStamina() const { return CurrentStamina; }
+	inline float GetMaxStamina() const { return MaxStamina; }
 
 	// 사망을 알리는 델리게이트
 	UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -87,6 +95,16 @@ public:
 private:
 	void StaminaAutoRegenCoolTimerSet();
 	void StaminaRegenPerTick();
+
+	inline void SetCurrentHealth(float InValue) {
+		CurrentHealth = InValue;
+		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
+	};
+	inline void SetCurrentStamina(float InValue) {
+		CurrentStamina = InValue;
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	};
+
 		
 protected:
 	// 현재 체력

@@ -4,16 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "MainHUDWidget.generated.h"
+#include "MainHudWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREALCPP_API UMainHUDWidget : public UUserWidget
+class UNREALCPP_API UMainHudWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	void NativeConstruct();
 
 protected:
 	virtual void NativeConstruct() override;

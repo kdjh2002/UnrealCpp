@@ -71,16 +71,19 @@ void UResourceComponent::AddStamina(float InValue)
 {
 	//여기서 타이머셋
 		// 스태미너 변경 처리
-	CurrentStamina += InValue;
+	//CurrentStamina += InValue;
 
 	//TimeSinceLastStaminaUse = 0;	//시간을 직접 제어할때 쓰던 코드(예시 확인용)
+	// 
+		// 스태미너 변경 처리
+	SetCurrentStamina(FMath::Clamp(CurrentStamina + InValue, 0, MaxStamina));
 
 	//스테미너를 소비하고 일정 시간 뒤에 자동생성되게 타이머 세팅
 	StaminaAutoRegenCoolTimerSet();
 
 
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0, MaxStamina);
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	//CurrentStamina = FMath::Clamp(CurrentStamina, 0, MaxStamina);
+	//OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
 	if (CurrentStamina <= 0)
 	{
 		//델리게이트로 스태미너가 떨어졌음을 알림
@@ -100,15 +103,20 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 
 //GetWorldTimerManager().ClearTimer(StaminaCoolTimer);	// 해서 나쁠 것은 없음(SetTimer할 때 이미 내부적으로 처리하고 있다)
 	timerManager.SetTimer(
-		StaminaAutoRegenCoolTimer,
+		StaminaAutoRegenCoolTimer,	//StaminaAutoRegenCoolTimer핸들에 연결된 타이머세팅. (StaminaRegenCoolTime초 후에 한번만 람다식을 실행하는 타이머
 		[this]() {
 			//bRegenStamina = true;
 			UE_LOG(LogTemp, Log, TEXT("리젠 타이머 실행"));
 
+			//StaminaRegenTickTImer핸들에 연결될 타이머 세팅(StamainaRegenCool)
+			//	StaminaTickInterval초를 첨에 한번 기다리고,
+			//	StaminaTickInterval시간간격으로
+			//	이 클래스의 staminaRegenPerTick함수를 실행하는 타이머
+
 			UWorld* world = GetWorld();
 			FTimerManager& timerManager = world->GetTimerManager();
 			timerManager.SetTimer(
-				StaminaRegenTickTimer,
+				StaminaRegenTickTimer,	
 				this,
 				&UResourceComponent::StaminaRegenPerTick,
 				StaminaTickInterval,	// 실행 간격
@@ -121,16 +129,20 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 
 void UResourceComponent::StaminaRegenPerTick()
 {
-	CurrentStamina += StaminaRegenAmountPerTick;	// 틱당 10
+	float stamina = CurrentStamina + StaminaRegenAmountPerTick;
+
+	//CurrentStamina += StaminaRegenAmountPerTick;	// 틱당 10
 	//CurrentStamina += MaxStamina * StaminaRegenRatePerTick;	// 틱당 최대 스태미너의 10%
 
-	if (CurrentStamina > MaxStamina)
+	if (stamina > MaxStamina)
 	{
-		CurrentStamina = MaxStamina;
+		stamina = MaxStamina;
 		UWorld* world = GetWorld();
 		FTimerManager& timerManager = world->GetTimerManager();
 		timerManager.ClearTimer(StaminaRegenTickTimer);
 	}
+	SetCurrentStamina(stamina);
+
 
 	//UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
 
