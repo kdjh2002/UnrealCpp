@@ -105,7 +105,7 @@ void UResourceComponent::StaminaAutoRegenCoolTimerSet()
 	FTimerManager& timerManager = world->GetTimerManager();
 
 //GetWorldTimerManager().ClearTimer(StaminaCoolTimer);	// 해서 나쁠 것은 없음(SetTimer할 때 이미 내부적으로 처리하고 있다)
-	timerManager.ClearTimer(StaminaRegenTickTimer);
+	timerManager.ClearTimer(StaminaRegenTickTimer);		//버그1. 줄이 새로 시작되면 지속회복 시키던 것 취소하기
 	timerManager.SetTimer(
 		StaminaAutoRegenCoolTimer,	//StaminaAutoRegenCoolTimer핸들에 연결된 타이머세팅. (StaminaRegenCoolTime초 후에 한번만 람다식을 실행하는 타이머
 		[this]() {

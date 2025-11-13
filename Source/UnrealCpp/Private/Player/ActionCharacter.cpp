@@ -82,20 +82,16 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 				[this](const FInputActionValue& _) {
 					SetSprintMode();
 				});
-		//enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Triggered, //누르고있을떄
-		//		[this](const FInputActionValue& _) {
-		//			//CurrentStamina -= 1.0f; //매 프레임마다 1만큼 깎이기
-		//			//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
-
-		//		});
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
 				[this](const FInputActionValue& _) {
 					SetWalkMode();
 				});
 
-			//IA_Roll
+		//IA_Roll,Attack, kick
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
 		enhanced->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &AActionCharacter::OnAttackInput);
+		enhanced->BindAction(IA_Kick, ETriggerEvent::Triggered, this, &AActionCharacter::OnKickInput);
+
 	}
 }
 
@@ -162,6 +158,29 @@ void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 
 }
 
+void AActionCharacter::OnKickInput(const FInputActionValue& InValue)
+{
+	if (AnimInstance.IsValid()
+		&& Resource->HasEnoughStamina(KickStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할때
+
+	{
+		if (!AnimInstance->IsAnyMontagePlaying())//&& CurrentStamina > RollStaminaCost()
+		{
+			//첫 번째 공격
+			PlayAnimMontage(KickMontage);
+			Resource->AddStamina(-KickStaminaCost);// -= 10.0f; //스테미너 감소
+		}
+		else if (AnimInstance->GetCurrentActiveMontage() == KickMontage)
+			// 몽타주가 재생 중인데, AttackMontage가 재생중이면
+		{
+			// 콤보 공격
+			//SectionKickForCombo();
+
+		}
+	}
+
+}
+
 
 void AActionCharacter::SetSprintMode()
 {
@@ -194,6 +213,17 @@ void AActionCharacter::SectionJumpForCombo()
 
 		bComboReady = false;	//중복 실행 방지
 		Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소
+	}
+}
+
+
+void AActionCharacter::StandRunStamina(float DeltaTime)
+{
+	if ((bIsSprint && !GetVelocity().IsNearlyZero())	//달리기 상태이고 움직이지 않고 있다.
+		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	//어떤 몽타쥬도 재생중이지 않다.(루트모션 때문에 Velocity 변경있음)
+	{
+		Resource->AddStamina(-SprintStaminaCost * DeltaTime);	// 스태미너 감소
+
 	}
 }
 

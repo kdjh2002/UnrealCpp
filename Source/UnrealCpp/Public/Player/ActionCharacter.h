@@ -55,6 +55,9 @@ protected:
 	//공격 입력받기
 	void OnAttackInput(const FInputActionValue& InValue);
 
+	//발차기 입력받기
+	void OnKickInput(const FInputActionValue& InValue);
+
 	//달리기 모드 설정
 	void SetSprintMode();
 
@@ -70,8 +73,9 @@ private:
 	//콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 
+
 	//달리기용 스테미너 소비함수
-	void StandRunStamina();
+	void StandRunStamina(float DeltaTime);
 
 protected:
 
@@ -95,6 +99,9 @@ protected:
 	TObjectPtr<UInputAction>IA_Roll = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Attack = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Kick = nullptr;
+
 	//---------------------------------------------------
 
 	//달리기 속도
@@ -115,6 +122,11 @@ protected:
 	//UAnimMontage* //이것도 가능
 	TObjectPtr<UAnimMontage>AttackMontage = nullptr;
 
+	//킥 몽타주
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
+	//UAnimMontage* //이것도 가능
+	TObjectPtr<UAnimMontage>KickMontage = nullptr;
+
 	//---------------------------------------------------
 	//움직이기 T/F
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|State")
@@ -133,6 +145,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float AttackStaminaCost = 15.0f;
 
+	// 킥을 하기 위해 필요한 스태미너 비용
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
+	float KickStaminaCost = 20.0f;
+
 	//----------------------------------------------------
 
 
@@ -141,8 +157,8 @@ private:
 	TWeakObjectPtr<UAnimInstance>AnimInstance = nullptr;
 
 	//현재 진행중인 섹션점프 노티파이 스테이트
+	//점프콤보
 	UPROPERTY()
-	//class UAnimNotifyState_SectionJump* SectionJumpNotify = nullptr;
 	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify;
 	//헤더 넣어줌
 
