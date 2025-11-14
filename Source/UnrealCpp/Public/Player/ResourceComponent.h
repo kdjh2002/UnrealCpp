@@ -17,8 +17,8 @@
 // Delegate vs Event
 // - Event는 외부에서 바인딩만 가능
 // - Delegate는 외부에서 바인딩과 실행 모두 가능
-// 
 // 선언은 클래스 외부에서 선언
+// 옵저버 패턴에 사용된다.
 
 //선언은 서로 조합이 가능함
 // DECLARE_DELEGATE

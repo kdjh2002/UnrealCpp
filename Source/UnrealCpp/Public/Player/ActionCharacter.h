@@ -163,6 +163,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
 	TWeakObjectPtr<class AWeaponActor>CurrentWeapon = nullptr;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TSubclassof<AWeaponActor> Test123;
+	//타입저장
 
 	//----------------------------------------------------
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
