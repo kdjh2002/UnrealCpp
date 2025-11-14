@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
+#include "Weapon/WeaponActor.h"
 
 
 // Sets default values
@@ -94,6 +95,14 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void AActionCharacter::OnAttackEnable(bool bEnable)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->AttackEnable(bEnable);
+	}
+}
+
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 {
 	FVector2D inputDirection = InValue.Get<FVector2D>();
@@ -139,10 +148,11 @@ void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
 	if (AnimInstance.IsValid()
 		&&Resource->HasEnoughStamina(AttackStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할때
-
 	{
 		if (!AnimInstance->IsAnyMontagePlaying() )//&& CurrentStamina > RollStaminaCost()
 		{
+			//
+			/*ActionCharacter->AttackEnable(false);*/
 			//첫 번째 공격
 			PlayAnimMontage(AttackMontage);
 			Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소

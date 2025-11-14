@@ -9,6 +9,7 @@
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지ㅏㅁㄱ
 
 
+class AWeaponActor;
 class UInputAction; 
 //class USpringArmComponent;
 class UResourceComponent;
@@ -33,6 +34,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//노티파이가 공격을 가능하게 만들라는 신호가 왔을떄 실행될 함수
+	void OnAttackEnable(bool bEnable);
+	
 	UResourceComponent* GetResourceComponent() { return Resource; }
 
 	inline void SetSectionJumpNotify(class UAnimNotifyState_SectionJump* InSectionJumpNotify)
@@ -86,6 +90,10 @@ protected:
 	//TObjectPtr<USpringArmComponent> a = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Resource")
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
+	
+	////실습 - statusComponent
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Resource")
+	//TObjectPtr<class UStatusComponent> Status = nullptr;
 
 
 	//IA_인풋 액션들 
@@ -128,9 +136,6 @@ protected:
 	TObjectPtr<UAnimMontage>KickMontage = nullptr;
 
 	//---------------------------------------------------
-	//움직이기 T/F
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|State")
-	bool bIsSprint = true;//canmove가 True여야 가능
 
 	//달리기 상태일 떄 초당 스테미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
@@ -149,9 +154,21 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float KickStaminaCost = 20.0f;
 
+	//움직이기 T/F
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
+	bool bIsSprint = true;//canmove가 True여야 가능
+
+	//플레이어가 현재 가지고 있는 무기
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TWeakObjectPtr<class AWeaponActor>CurrentWeapon = nullptr;
+
+
 	//----------------------------------------------------
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//AWeaponActor* Weapon;
 
 
+	//---------------------------------------------------
 private:
 	UPROPERTY()
 	TWeakObjectPtr<UAnimInstance>AnimInstance = nullptr;

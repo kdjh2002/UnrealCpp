@@ -25,7 +25,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void AttackEnable(bool bEnable);
+	void AttackEnable(bool bEnable);	//콜리전 바꾸기
 
 	virtual void PostInitializeComponents() override;
 	
