@@ -9,10 +9,10 @@
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지ㅏㅁㄱ
 
 
-class AWeaponActor;
 class UInputAction; 
 //class USpringArmComponent;
 class UResourceComponent;
+class UStatusComponent;
 
 UCLASS()
 class UNREALCPP_API AActionCharacter : public ACharacter
@@ -38,6 +38,7 @@ public:
 	void OnAttackEnable(bool bEnable);
 	
 	UResourceComponent* GetResourceComponent() { return Resource; }
+	UStatusComponent* GetStatusComponent() { return Status; }
 
 	inline void SetSectionJumpNotify(class UAnimNotifyState_SectionJump* InSectionJumpNotify)
 	{
@@ -92,8 +93,8 @@ protected:
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
 	
 	////실습 - statusComponent
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Resource")
-	//TObjectPtr<class UStatusComponent> Status = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Status")
+	TObjectPtr<class UStatusComponent> Status = nullptr;
 
 
 	//IA_인풋 액션들 

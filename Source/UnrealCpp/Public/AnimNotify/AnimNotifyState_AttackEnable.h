@@ -13,7 +13,6 @@ UCLASS()
 class UNREALCPP_API UAnimNotifyState_AttackEnable : public UAnimNotifyState
 {
 	GENERATED_BODY()
-	
 public:
 	virtual void NotifyBegin(
 		USkeletalMeshComponent* MeshComp,

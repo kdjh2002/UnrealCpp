@@ -8,13 +8,12 @@ void UAnimNotifyState_AttackEnable::NotifyBegin(USkeletalMeshComponent* MeshComp
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	OwnerCharacter = Cast<AActionCharacter>(MeshComp->GetOwner());
 	if (!OwnerCharacter.IsValid())
 	{
 		OwnerCharacter = Cast<AActionCharacter>(MeshComp->GetOwner());
 	}
 	if(OwnerCharacter.IsValid())
-	{
+	{		
 		OwnerCharacter->OnAttackEnable(true);
 
 	}
@@ -25,8 +24,7 @@ void UAnimNotifyState_AttackEnable::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 {
 	if (OwnerCharacter.IsValid())
 	{
-		
-		OwnerCharacter->OnAttackEnable(true);
+		OwnerCharacter->OnAttackEnable(false);
 	}
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 }
