@@ -82,6 +82,15 @@ protected:
 	// 아이템 획득에 걸리는 시간(초)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float Duration = 0.5f;
+	
+	//시작할때위치
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Location")
+	FVector StartLocation;
+
+	//픽업됬을떄 캐릭터쪽으로
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lcoation")
+	FVector TargetLocation;
+
 
 private:
 	//픽업 아이템을 먹은 액터

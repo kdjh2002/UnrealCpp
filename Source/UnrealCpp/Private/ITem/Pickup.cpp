@@ -50,6 +50,8 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 
+	StartLocation = GetActorLocation();
+
 	if (PickupOverlap)
 	{
 		PickupOverlap->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPickupBeginOverlap);
@@ -89,6 +91,10 @@ void APickup::OnPickup_Implementation(AActor* Target)
 		//UE_LOG(LogTemp, Log, TEXT("OnPickup_Implementation 실행"));
 		bPickuped = true;
 		PickupOwner = Target;
+
+		StartLocation = GetActorLocation();
+		TargetLocation = Target->GetActorLocation() + FVector(0, 0, 50);
+
 		PickupTimeline->PlayFromStart();	// 타임라인 시작
 	}
 }
@@ -102,6 +108,9 @@ void APickup::OnScaleUpdate(float Value)
 {
 	FVector NewScale = FVector::One() * Value;
 	SetActorScale3D(NewScale);
+
+	FVector NewLocation = FMath::Lerp(TargetLocation, StartLocation, Value);
+	SetActorLocation(NewLocation);
 }
 
 void APickup::OnScaleFinish()
