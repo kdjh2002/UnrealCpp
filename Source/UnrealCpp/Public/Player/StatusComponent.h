@@ -16,8 +16,6 @@ public:
 	// Sets default values for this component's properties
 	UStatusComponent();
 
-
-public:	
 	//스테이터스와 모디파이어를 기반으로 공격력 계산해서 리턴하는 함수
 	float GetAttackPower() const;
 
