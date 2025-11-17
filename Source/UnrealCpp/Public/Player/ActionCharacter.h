@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
+#include "Common/CommonEnums.h"
+#include "InventoryOwner.h"
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지ㅏㅁㄱ
 
 
@@ -15,7 +17,7 @@ class UResourceComponent;
 class UStatusComponent;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner
 {
 	GENERATED_BODY()
 
@@ -33,6 +35,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// 아이템 추가 인터페이스 함수 구현
+	virtual void AddItem_Implementation(EItemCode Code);
 
 	//노티파이가 공격을 가능하게 만들라는 신호가 왔을떄 실행될 함수
 	void OnAttackEnable(bool bEnable);
@@ -71,9 +76,15 @@ protected:
 	UFUNCTION()
 	void SetWalkMode();
 
+	
+	//걷기 모드 설정(다이나믹에서 )
+	UFUNCTION()
+	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+
 	//스테미너 확인
 	//void CheckMove();
-
+	//-----------------------------------
 private:
 	//콤보용 섹션 점프 함수
 	void SectionJumpForCombo();

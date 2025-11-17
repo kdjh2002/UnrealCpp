@@ -9,7 +9,7 @@
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
 #include "Weapon/WeaponActor.h"
-
+#include "ITem/Pickupable.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -59,11 +59,11 @@ void AActionCharacter::BeginPlay()
 	//	Resource->AddHealth(Status->GetMaxHealth());
 	//	Resource->AddStamina(Status->GetMaxStamina());
 
-	//	
-	//}
-	//게임 진행 중에 자주 변경되는 값은 시작 시점에서 리셋을 해줌
-	bIsSprint = true;
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina); 
+	bIsSprint = false;
+
+	//캐릭터에 다른 액터가 오버랩되었을 떄 실행하기 위한 바인딩
+	OnActorBeginOverlap.AddDynamic(this, &AActionCharacter::OnBeginOverlap);
+
 }
 
 // Called every frame
@@ -107,6 +107,13 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		enhanced->BindAction(IA_Kick, ETriggerEvent::Triggered, this, &AActionCharacter::OnKickInput);
 
 	}
+}
+
+void AActionCharacter::AddItem_Implementation(EItemCode code)
+{
+	const UEnum* EnumPtr = StaticEnum<EItemCode>();
+	UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(code)).ToString());
+
 }
 
 void AActionCharacter::OnAttackEnable(bool bEnable)
@@ -222,6 +229,24 @@ void AActionCharacter::SetWalkMode()
 	bIsSprint = false;
 
 
+}
+
+void AActionCharacter::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	//UE_LOG(LogTemp, Log, TEXT("Char overlap : other is %s"), *OtherActor->GetName());
+
+	//Cast를 이용한 인터페이스 사용
+	//IPickupable* test = Cast<IPickupable>(OtherActor);
+	//if (test)
+	//{
+	//	IPickupable::Execute_OnPickup(OtherActor);
+	//	//만약에 블루프린트 구현이 있을 경우, 블루프린트의 구현이 실행된다.
+	//	// test->OnPickup_Implementation(); //블루프린트 구현은 무시	
+	//}
+	if (OtherActor->Implements<UPickupable>())	//OtherActor
+	{
+		IPickupable::Execute_OnPickup(OtherActor, this);	// 구현이 되어 있으면 실행
+	}
 }
 
 void AActionCharacter::SectionJumpForCombo()

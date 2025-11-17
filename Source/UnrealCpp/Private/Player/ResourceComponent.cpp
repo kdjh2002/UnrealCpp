@@ -11,7 +11,7 @@ UResourceComponent::UResourceComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -23,41 +23,42 @@ void UResourceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	CurrentStamina = MaxStamina; //시작에 스테미나 맥스로 채우기
-
+	// 게임 진행 중에 자주 변경되는 값은 시작 시점에서 리셋을 해주는 것이 좋다.
+	SetCurrentHealth(MaxHealth);
+	SetCurrentStamina(MaxStamina);	// 시작할 때 최대치로 리셋
 }
 
 
-// Called every frame
-void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-		// 내가 시간 누적을 직접 하는 경우
-	//TimeSinceLastStaminaUse += DeltaTime;
-	//if (TimeSinceLastStaminaUse > StaminaRegenCoolTime && CurrentStamina <= MaxStamina)
-	//{
-	//	CurrentStamina = FMath::Min(CurrentStamina + StaminaRegenAmount * DeltaTime, MaxStamina);
-	//	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
-	//}
-
-	// 타이머로 조건만 설정하는 경우
-	//if (bRegenStamina)
-	//{
-	//	CurrentStamina += StaminaRegenAmount * DeltaTime;
-	//	if (CurrentStamina > MaxStamina)
-	//	{
-	//		bRegenStamina = false;
-	//		CurrentStamina = MaxStamina;
-	//	}
-	//	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
-	//}
-}
+//// Called every frame
+//void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+//{
+//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+//
+//	// ...
+//		// 내가 시간 누적을 직접 하는 경우
+//	//TimeSinceLastStaminaUse += DeltaTime;
+//	//if (TimeSinceLastStaminaUse > StaminaRegenCoolTime && CurrentStamina <= MaxStamina)
+//	//{
+//	//	CurrentStamina = FMath::Min(CurrentStamina + StaminaRegenAmount * DeltaTime, MaxStamina);
+//	//	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
+//	//}
+//
+//	// 타이머로 조건만 설정하는 경우
+//	//if (bRegenStamina)
+//	//{
+//	//	CurrentStamina += StaminaRegenAmount * DeltaTime;
+//	//	if (CurrentStamina > MaxStamina)
+//	//	{
+//	//		bRegenStamina = false;
+//	//		CurrentStamina = MaxStamina;
+//	//	}
+//	//	UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
+//	//}
+//}
 
 void UResourceComponent::AddHealth(float InValue)
 {
-	float health = CurrentHealth + InValue;
+	SetCurrentHealth(CurrentHealth + InValue);
 	//CurrentHealth = FMath::Clamp(health, 0, MaxHealth);
 	//OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 
@@ -75,9 +76,8 @@ void UResourceComponent::AddStamina(float InValue)
 
 	//TimeSinceLastStaminaUse = 0;	//시간을 직접 제어할때 쓰던 코드(예시 확인용)
 	// 
-		// 스태미너 변경 처리
-	/*SetCurrentStamina(FMath::Clamp(CurrentStamina + InValue, 0, MaxStamina));*/
-	float Stamina = CurrentStamina + InValue;
+	SetCurrentStamina(CurrentStamina + InValue);
+
 
 	if (InValue < 0)
 	{
@@ -92,7 +92,6 @@ void UResourceComponent::AddStamina(float InValue)
 	{
 		//델리게이트로 스태미너가 떨어졌음을 알림
 		OnStaminaEmpty.Broadcast();
-
 	}
 
 

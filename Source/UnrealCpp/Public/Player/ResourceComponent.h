@@ -50,7 +50,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	// 체력 추가/감소용 함수
 	UFUNCTION(BlueprintCallable)
@@ -70,7 +70,7 @@ public:
 
 	//스테미너가 충분한지 확인하는 함수
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	inline bool HasEnoughStamina(float InValue) { return CurrentStamina >= InValue; }
+	inline bool HasEnoughStamina(float InValue) const { return CurrentStamina >= InValue; }
 
 
 	inline float GetCurrentStamina() const { return CurrentStamina; }

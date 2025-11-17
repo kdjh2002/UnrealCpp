@@ -21,10 +21,10 @@ float UStatusComponent::GetAttackPower() const
 
 float UStatusComponent::GetMaxHealth() const
 {
-	return Strength * AttackModifier;
+	return (Strength * 0.5f + Vitality * 0.5f) * 10.0f;
 }
 
 float UStatusComponent::GetMaxStamina() const
 {
-	return Strength * AttackModifier;
+	return (Strength * 0.2f + Vitality * 0.8f) * 10.0f;
 }
