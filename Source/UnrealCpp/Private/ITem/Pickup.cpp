@@ -91,7 +91,7 @@ void APickup::OnPickup_Implementation(AActor* Target)
 		//UE_LOG(LogTemp, Log, TEXT("OnPickup_Implementation 실행"));
 		bPickuped = true;
 		PickupOwner = Target;
-
+		SetActorEnableCollision(false);	//이 액터와 포함하는 모든 컴포넌트의 충돌 정지
 		StartLocation = GetActorLocation();
 		TargetLocation = Target->GetActorLocation() + FVector(0, 0, 50);
 
