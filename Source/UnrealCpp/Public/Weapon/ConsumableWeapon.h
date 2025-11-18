@@ -19,6 +19,8 @@ public:
 	virtual void OnAttack() override;
 	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
 
+	virtual bool CanAttack() override { return RemainingUseCount > 0; }
+
 protected:
 	//조건 생각하기
 
@@ -30,6 +32,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data");
 	int32 RemainingUseCount = 10;
 
-	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Data");
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Weapon");
 	FOnWeaponUseEnded OnWeaponUseEnded;
 };

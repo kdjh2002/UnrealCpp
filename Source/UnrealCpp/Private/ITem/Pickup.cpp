@@ -37,7 +37,8 @@ APickup::APickup()
 	PickupOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap"));
 	PickupOverlap->SetupAttachment(BaseRoot);
 	PickupOverlap->SetSphereRadius(100.0f);
-	PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+	//PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn")); //생성 직후는 바로 먹을 수 없다
+	PickupOverlap->SetCollisionProfileName(TEXT("NoCollision"));
 
 	Effect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Effect"));
 	Effect->SetupAttachment(BaseRoot);
@@ -67,6 +68,16 @@ void APickup::BeginPlay()
 
 	PickupTimeline->SetPlayRate(1 / Duration);
 	}
+
+	FTimerManager& timerManager = GetWorldTimerManager();
+	timerManager.ClearTimer(PickupableTimer);
+	timerManager.SetTimer(
+		PickupableTimer,
+		[this]() {
+			PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
+		},
+		PickupableTime, false);
+
 	bPickuped = false;
 }
 
@@ -94,6 +105,11 @@ void APickup::OnPickup_Implementation(AActor* Target)
 		BaseRoot->SetSimulatePhysics(false);
 		PickupTimeline->PlayFromStart();	// 타임라인 시작
 	}
+}
+
+void APickup::AddImpulse(FVector& Velocity)
+{
+	BaseRoot->AddImpulse(Velocity, NAME_None, true);
 }
 
 

@@ -9,7 +9,9 @@
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
 #include "Weapon/WeaponActor.h"
+#include "Weapon/UsedWeapon.h"
 #include "ITem/Pickupable.h"
+#include "ITem/Pickup.h"
 
 // Sets default values
 AActionCharacter::AActionCharacter()
@@ -26,6 +28,9 @@ AActionCharacter::AActionCharacter()
 	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerCamera"));
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeRotation(FRotator(-20.0f, 0.0f, 0.0f));
+
+	DropLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DropLocation"));
+	DropLocation-> SetupAttachment(RootComponent);
 
 	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
 	Status = CreateDefaultSubobject<UStatusComponent>(TEXT("PlayerStatus"));
@@ -124,6 +129,16 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	}
 }
 
+void AActionCharacter::TestDropUsedWeapon()
+{
+	DropUsedWeapon();
+}
+
+void AActionCharacter::TestDropCurrentWeapon()
+{
+	DropCurrentWeapon();
+}
+
 void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 {
 	FVector2D inputDirection = InValue.Get<FVector2D>();
@@ -167,24 +182,33 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid()
-		&&Resource->HasEnoughStamina(AttackStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할때
+	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
+		&& (CurrentWeapon.IsValid()&& CurrentWeapon->CanAttack()))	// 애님 인스턴스가 있고 스태미너도 충분할때
 	{
-		if (!AnimInstance->IsAnyMontagePlaying() )//&& CurrentStamina > RollStaminaCost()
+		if (!AnimInstance->IsAnyMontagePlaying())//&& CurrentStamina > RollStaminaCost()
 		{
-			//
 			/*ActionCharacter->AttackEnable(false);*/
 			//첫 번째 공격
 			PlayAnimMontage(AttackMontage);
+
+			FOnMontageEnded onMontageEnded;
+			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMontageEnded);
+			AnimInstance->Montage_SetEndDelegate(onMontageEnded);	//몽타주가 끝났을 떄 델리게이트 발송(몽타주 플레이 이후에 등록해야함)
+
 			Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소
+			if (CurrentWeapon.IsValid())
+			{
+				CurrentWeapon->OnAttack();
+			}
 		}
-		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)	
+		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)
 			// 몽타주가 재생 중인데, AttackMontage가 재생중이면
 		{
 			// 콤보 공격
 			SectionJumpForCombo();
-		}
+
 	}
+}
 
 }
 
@@ -249,6 +273,17 @@ void AActionCharacter::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 	}
 }
 
+void AActionCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	//UE_LOG(LogTemp, Log, TEXT("공격 몽타주가 끝남"));
+
+	if (CurrentWeapon.IsValid()&&!CurrentWeapon->CanAttack())	//CurrentWeapon이 공격할수 없으면 (=사용회수가 안남았다)
+	{
+	DropUsedWeapon();
+	}
+
+}
+
 void AActionCharacter::SectionJumpForCombo()
 {
 	if (SectionJumpNotify.IsValid() && bComboReady)  //SectionJumpNotify가 있고 콤보가 가능한 상태이면
@@ -261,6 +296,11 @@ void AActionCharacter::SectionJumpForCombo()
 
 		bComboReady = false;	//중복 실행 방지
 		Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소
+
+		if (CurrentWeapon.IsValid())
+		{
+			CurrentWeapon->OnAttack();
+		}
 	}
 }
 
@@ -277,25 +317,38 @@ void AActionCharacter::StandRunStamina(float DeltaTime)
 	//GetWorld()->GetFirst
 }
 
-//void AActionCharactor::CheckMove()
-//{
-//	CurrentStamina = FMath::Clamp(CurrentStamina, -0.0f, MAXStamina);
-//
-//	if (CurrentStamina <= 0)
-//	{
-//		SetWalkMode();
-//		bIsSprint = false;
-//	}
-//	else
-//	{
-//		bIsSprint = true;
-//	}
-//	CurrentStamina += 0.5f; //매 프레임마다 1만큼 깎이기
-//	UE_LOG(LogTemp, Warning, TEXT("IsSprint : %d"), bIsSprint);
-//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
-//}
+void AActionCharacter::DropUsedWeapon()
+{
+		UE_LOG(LogTemp, Log, TEXT("다 쓴 무기 버리기"));
+	if (CurrentWeapon.IsValid())
+	{
+		TSubclassOf<AUsedWeapon>* usedClass = UsedWeapons.Find(CurrentWeapon->GetWeaponID());
 
+		if (usedClass)
+		{
+			GetWorld()->SpawnActor<AActor>(
+				*usedClass,
+				DropLocation->GetComponentLocation(),
+				//GetActorLocation() + GetActorForwardVector() * 100.0f,
+				GetActorRotation());
+		}
+	}
+}
 
+void AActionCharacter::DropCurrentWeapon()
+{
+	if (CurrentWeapon.IsValid() && CurrentWeapon->GetWeaponID() != EItemCode::BasicWeapon)
+	{
+		if (TSubclassOf<APickup>* pickupClass = PickupWeapons.Find(CurrentWeapon->GetWeaponID()))
+		{
+			APickup* pickup = GetWorld()->SpawnActor<APickup>(
+				*pickupClass,
+				DropLocation->GetComponentLocation(),
+				GetActorRotation()
+			);
 
-
-
+			FVector velocity = (GetActorForwardVector() + GetActorUpVector()) * 300.0f;
+			pickup->AddImpulse(velocity);
+		}
+	}
+}

@@ -13,8 +13,8 @@ UCLASS()
 class UNREALCPP_API APickup : public AActor, public IPickupable
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	APickup();
 
@@ -22,13 +22,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	//IPickupable의 구현
 	virtual void OnPickup_Implementation(AActor* Target);
 
+	// 픽업에 힘을 가해서 날리는 함수
+	void AddImpulse(FVector& Velocity);
 
 private:
 	UFUNCTION()
@@ -62,6 +64,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	EItemCode PickupItem = EItemCode::BasicWeapon;
 
+
+	//스폰 후에 먹을 수 있게 될 때까지의 시간
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	float PickupableTime = 3.0f;
+
 	//아이템 회전을 위한 속도
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float RotateSpeed = 180.0f;
@@ -81,16 +88,8 @@ protected:
 	// 아이템 획득에 걸리는 시간(초)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float Duration = 0.5f;
-	
-	////시작할때위치
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Location")
-	//FVector StartLocation;
 
-	////픽업됬을떄 캐릭터쪽으로
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lcoation")
-	//FVector TargetLocation;
-
-		// 아이템 획득시 튀어 오르는 높이
+	// 아이템 획득시 튀어 오르는 높이
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float PickupHeight = 50.0f;
 
@@ -104,4 +103,8 @@ private:
 
 	//획득했을 떄 메시 위치(월드)
 	FVector PickupStartLocation;
+
+	//스폰 직후 먹지 못하는 시간동안 기다리는 것을 처리하는 타이머 핸들
+	FTimerHandle PickupableTimer;
+
 };

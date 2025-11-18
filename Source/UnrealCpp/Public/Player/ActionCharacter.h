@@ -50,9 +50,13 @@ public:
 		SectionJumpNotify = SectionJumpNotify;
 		bComboReady = InSectionJumpNotify != nullptr;
 	}
-public:
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	//float Speed = 100.0f;
+
+	//테스트용 함수
+	UFUNCTION(BlueprintCallable)
+	void TestDropUsedWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void TestDropCurrentWeapon();
 
 
 protected:
@@ -81,17 +85,25 @@ protected:
 	UFUNCTION()
 	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
-
 	//스테미너 확인
 	//void CheckMove();
 	//-----------------------------------
 private:
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 	//콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 
-
 	//달리기용 스테미너 소비함수
 	void StandRunStamina(float DeltaTime);
+
+	//사용 다한 무기를 버리는 함수
+	void DropUsedWeapon();
+
+	//사용 중이던 무기를 버리는 함수
+	void DropCurrentWeapon();
+
 
 protected:
 
@@ -106,6 +118,9 @@ protected:
 	////실습 - statusComponent
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Status")
 	TObjectPtr<class UStatusComponent> Status = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Weapon")
+	TObjectPtr<class USceneComponent> DropLocation = nullptr;
 
 
 	//IA_인풋 액션들 
@@ -173,10 +188,13 @@ protected:
 	//플레이어가 현재 가지고 있는 무기
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
 	TWeakObjectPtr<class AWeaponActor>CurrentWeapon = nullptr;
+	//사용 다한 무기(순수 장식)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TMap < EItemCode, TSubclassOf <class AUsedWeapon >> UsedWeapons;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//TSubclassof<AWeaponActor> Test123;
-	//타입저장
+	// Pickup할 수 있는 무기 액터
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	TMap<EItemCode, TSubclassOf<class APickup>> PickupWeapons;
 
 	//----------------------------------------------------
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -194,6 +212,9 @@ private:
 	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify;
 	//헤더 넣어줌
 
+	////플레이어가 현재 가지고 있는지 아닌지
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
+	//bool bWeaponUseEnded = false;
 
 	//콤보가 가능한 상황인지 확인하기 위한 플래그
 	bool bComboReady = false;
