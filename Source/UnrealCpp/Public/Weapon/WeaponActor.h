@@ -28,6 +28,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);	//콜리전 바꾸기
 
+	//공격을 했을떄 실행되어야 할 함수
+	UFUNCTION(BlueprintCallable)
+	virtual void OnAttack() {};
+
+	//무기를 획득했을떄
+	UFUNCTION(BlueprintCallable)
+	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
+
 	virtual void PostInitializeComponents() override;
 	
 	UFUNCTION(BlueprintCallable)

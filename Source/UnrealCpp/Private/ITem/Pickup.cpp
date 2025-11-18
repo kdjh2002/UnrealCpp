@@ -52,11 +52,6 @@ void APickup::BeginPlay()
 
 	//StartLocation = GetActorLocation();
 
-	if (PickupOverlap)
-	{
-		PickupOverlap->OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPickupBeginOverlap);
-	}
-
 	if (PickupTimeline)
 	{
 		if(ScaleCurve)
@@ -101,10 +96,6 @@ void APickup::OnPickup_Implementation(AActor* Target)
 	}
 }
 
-void APickup::OnPickupBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	UE_LOG(LogTemp, Log, TEXT("Pickup Overlap"));
-}
 
 void APickup::OnTimelineUpdate(float Value)
 {
@@ -137,5 +128,5 @@ void APickup::OnTimelineFinished()
 	{
 		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem);
 	}
-	//Destroy();	//자기자신 삭제
+	Destroy();	//자기자신 삭제
 }
