@@ -41,10 +41,10 @@ private:
 		const FHitResult& SweepResult);
 
 	UFUNCTION()
-	void OnScaleUpdate(float Value);
+	void OnTimelineUpdate(float Value);
 
 	UFUNCTION()
-	void OnScaleFinish();
+	void OnTimelineFinished();
 
 protected:
 	//물리 적용용 루트
@@ -75,6 +75,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float RotateSpeed = 180.0f;
 
+	// 픽업 획득 효과용 거리 보간 커브
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UCurveFloat> DistanceCurve = nullptr;
+
+	// 픽업 획득 효과용 높이 커브
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
+	TObjectPtr<UCurveFloat> HeightCurve = nullptr;
+
 	// 픽업 획득 효과용 스케일 커브
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	TObjectPtr<UCurveFloat> ScaleCurve = nullptr;
@@ -83,13 +91,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float Duration = 0.5f;
 	
-	//시작할때위치
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Location")
-	FVector StartLocation;
+	////시작할때위치
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Location")
+	//FVector StartLocation;
 
-	//픽업됬을떄 캐릭터쪽으로
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lcoation")
-	FVector TargetLocation;
+	////픽업됬을떄 캐릭터쪽으로
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lcoation")
+	//FVector TargetLocation;
+
+		// 아이템 획득시 튀어 오르는 높이
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
+	float PickupHeight = 50.0f;
 
 
 private:
@@ -98,4 +110,7 @@ private:
 
 	//획득 되었는지 여부(true면 획득 처리중)
 	bool bPickuped = false;
+
+	//획득했을 떄 메시 위치(월드)
+	FVector PickupStartLocation;
 };
