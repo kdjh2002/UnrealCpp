@@ -57,6 +57,52 @@ void AWeaponActor::OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherAc
 	UGameplayStatics::ApplyDamage(OtherActor, finalDamage, instigator, this, DamageType);
 }
 
+void AWeaponActor::WeaponActivate(bool bActivate)
+{
+	//SetActorHiddenInGame(!bActivate);	// 무기는 비지빌리티만 수정하면 된다.
+	if (bActivate)
+	{
+		// 무기 활성화
+		AttachToComponent(
+			WeaponOwner->GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("hand_rSocket"));		// 플레이어의 손에 붙이기
+		SetActorHiddenInGame(false);	// 게임에서 보이게 하기
+		//SetActorEnableCollision(true);
+		//SetActorTickEnabled(true);
+		OnWeaponActivate();
+	}
+	else
+	{
+		// 무기 비활성화
+		SetActorHiddenInGame(true);
+		AttachToComponent(
+			WeaponOwner->GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("root"));
+		SetActorRelativeLocation(FVector(0.0f, 0.0f, -10000.0f));	// 안보이는 곳에 배치
+		//SetActorEnableCollision(false);
+		//SetActorTickEnabled(false);
+		OnWeaponDeactivate();
+	}
+		//보일것이냐 말거냐- 비지빌리티 - ㅇ
+		//충돌할거냐 말거냐 - 충돌 - ㄴ
+		//액터의 틱 돌릴거냐 말거냐 - 액터의 틱 - ㄴ
+		//액터의 컴포넌트들의 틱을 돌릴거냐 말거냐 - 액터의 컴포넌트 틱 - ㄴ
+		//물리 시뮬레이션 켤꺼냐 말꺼냐 - ㄴ
+		//타이머 켤꺼냐말거냐 - ㄴ
+		//오디오 켤거냐말거냐 - ㄴ
+		//파티클 - ㄴ
+		//애니메이션 - ㄴ
+		//movement컴포넌트 - ㄴ
+		//TSet<UActorComponent*>Components = GetComponents();
+		//for (auto comp : components)
+		//{
+		//	//자식 컴포넌트 전부 끄기
+		//}
+
+}
+
 void AWeaponActor::AttackEnable(bool bEnable)
 {
 	if (bEnable)
@@ -69,9 +115,9 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	}
 }
 
-void AWeaponActor::OnWeaponPickuped(AActionCharacter* InOwner)
+void AWeaponActor::OnWeaponPickuped()
 {
-	WeaponOwner = InOwner;
+
 }
 
 void AWeaponActor::PostInitializeComponents()

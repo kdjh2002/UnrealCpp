@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Weapon/WeaponActor.h"
+#include "ITem/Consumable.h"
 #include "ConsumableWeapon.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponUseEnded);
+
 /**
  * 
  */
@@ -17,21 +19,28 @@ class UNREALCPP_API AConsumableWeapon : public AWeaponActor
 	
 public:
 	virtual void OnAttack() override;
-	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
+	virtual void OnWeaponPickuped() override;
 
 	virtual bool CanAttack() override { return RemainingUseCount > 0; }
+
+	//virtual FOnConsume& GetOnConsumeDelegate() override { return OnWeaponUseEnded; };
+
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void OnWeaponActivate() override;
 
 protected:
 	//조건 생각하기
 
 	//최대 사용회수
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data");
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
 	int32 MaxUseCount = 10;
 
 	//남은 사용 횟수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	int32 RemainingUseCount = 10;
-
-	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Weapon");
-	FOnWeaponUseEnded OnWeaponUseEnded;
+	// 무기를 다 사용했을 때 실행되는 델리게이트(현재 사용 안함)
+	UPROPERTY(BlueprintAssignable, BlueprintReadWrite, Category = "Weapon")
+	FOnConsume OnWeaponUseEnded;
 };

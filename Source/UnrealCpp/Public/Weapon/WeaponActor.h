@@ -25,7 +25,14 @@ protected:
 	UFUNCTION()
 	void OnWeaponBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	virtual void OnWeaponActivate() {};
+	virtual void OnWeaponDeactivate() {};
+
 public:
+	//무기 자체를 활성화/비활성화 하는 함수(비지빌리티)
+	UFUNCTION(BlueprintCallable)
+	void WeaponActivate(bool bActivate);
+
 	UFUNCTION(BlueprintCallable)
 	void AttackEnable(bool bEnable);	//콜리전 바꾸기
 
@@ -39,12 +46,13 @@ public:
 
 	//무기를 획득했을떄
 	UFUNCTION(BlueprintCallable)
-	virtual void OnWeaponPickuped(AActionCharacter* InOwner);
+	virtual void OnWeaponPickuped();
 
 	virtual void PostInitializeComponents() override;
 
 	inline EItemCode GetWeaponID() const { return WeaponID; }
 
+	inline void SetWeaponOwner(AActionCharacter* InOwner) {WeaponOwner = InOwner;}
 	//UFUNCTION(BlueprintCallable)
 	//inline void SetWeaponOwner(AActionCharacter* InOwner) { WeaponOwner = InOwner; }
 

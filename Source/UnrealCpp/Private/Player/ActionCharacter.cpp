@@ -32,6 +32,7 @@ AActionCharacter::AActionCharacter()
 
 	DropLocation = CreateDefaultSubobject<USceneComponent>(TEXT("DropLocation"));
 	DropLocation-> SetupAttachment(RootComponent);
+	DropLocation->SetRelativeLocation(FVector(80.0f, 30.0f, 0.0f));
 
 	Resource = CreateDefaultSubobject<UResourceComponent>(TEXT("PlayerResource"));
 	Status = CreateDefaultSubobject<UStatusComponent>(TEXT("PlayerStatus"));
@@ -46,10 +47,10 @@ AActionCharacter::AActionCharacter()
 // Called when the game starts or when spawned
 void AActionCharacter::BeginPlay()
 {
-		if (Resource)
-		{
-			Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
-	
+	if (Resource)
+	{
+		Resource->OnStaminaEmpty.AddDynamic(this, &AActionCharacter::SetWalkMode);
+
 		if (Status)
 		{
 			Resource->SetMaxHealth(Status->GetMaxHealth());
@@ -57,7 +58,7 @@ void AActionCharacter::BeginPlay()
 		}
 	}
 	Super::BeginPlay();		//컴포넌트들의 BeginPlay가 실행된다.
-	
+
 	if (GetMesh())
 	{
 		AnimInstance = GetMesh()->GetAnimInstance();  //ABP 객체 가져오기
@@ -100,13 +101,13 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		//IA_Sprint
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Started,
-				[this](const FInputActionValue& _) {
-					SetSprintMode();
-				});
+			[this](const FInputActionValue& _) {
+				SetSprintMode();
+			});
 		enhanced->BindActionValueLambda(IA_Sprint, ETriggerEvent::Completed,
-				[this](const FInputActionValue& _) {
-					SetWalkMode();
-				});
+			[this](const FInputActionValue& _) {
+				SetWalkMode();
+			});
 
 		//IA_Roll,Attack, kick
 		enhanced->BindAction(IA_Roll, ETriggerEvent::Triggered, this, &AActionCharacter::OnRollInput);
@@ -116,11 +117,35 @@ void AActionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
-void AActionCharacter::AddItem_Implementation(EItemCode code)
+void AActionCharacter::AddItem_Implementation(EItemCode Code)
 {
 	const UEnum* EnumPtr = StaticEnum<EItemCode>();
-	UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(code)).ToString());
+	//UE_LOG(LogTemp, Log, TEXT("아이템 추가 : %s"), *EnumPtr->GetDisplayNameTextByValue(static_cast<int8>(code)).ToString());
 
+	EquipWeapon(Code);
+}
+
+void AActionCharacter::EquipWeapon(EItemCode WeaponCode)
+{
+	if (CurrentWeapon.IsValid())
+	{
+		//장비하고 있던 무기는 해제
+		CurrentWeapon->WeaponActivate(false);
+	}
+	//WeaponCode에 해당하는 무기 장비
+	CurrentWeapon->WeaponActivate(true);
+}
+
+void AActionCharacter::DropWeapon(EItemCode WeaponCode)
+{
+	UE_LOG(LogTemp, Log, TEXT("다쓴 무기 버리기"));
+	if (TSubclassOf<AUsedWeapon> usedClass = WeaponManager->GetUsedWeaponClass(WeaponCode))
+	{
+		GetWorld()->SpawnActor<AActor>(
+			usedClass,
+			DropLocation->GetComponentLocation(),
+			GetActorRotation());
+	}
 }
 
 void AActionCharacter::OnAttackEnable(bool bEnable)
@@ -133,7 +158,10 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 
 void AActionCharacter::TestDropUsedWeapon()
 {
-	DropUsedWeapon();
+	if (CurrentWeapon.IsValid())
+	{
+		DropWeapon(CurrentWeapon->GetWeaponID());
+	}
 }
 
 void AActionCharacter::TestDropCurrentWeapon()
@@ -281,7 +309,8 @@ void AActionCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 
 	if (CurrentWeapon.IsValid()&&!CurrentWeapon->CanAttack())	//CurrentWeapon이 공격할수 없으면 (=사용회수가 안남았다)
 	{
-	DropUsedWeapon();
+		DropWeapon(CurrentWeapon->GetWeaponID());	// 현재 사용 중인 무기 버리기
+		EquipWeapon(EItemCode::BasicWeapon);
 	}
 
 }
@@ -319,23 +348,6 @@ void AActionCharacter::StandRunStamina(float DeltaTime)
 	//GetWorld()->GetFirst
 }
 
-void AActionCharacter::DropUsedWeapon()
-{
-		UE_LOG(LogTemp, Log, TEXT("다 쓴 무기 버리기"));
-	if (CurrentWeapon.IsValid())
-	{
-		TSubclassOf<AUsedWeapon>* usedClass = UsedWeapons.Find(CurrentWeapon->GetWeaponID());
-
-		if (usedClass)
-		{
-			GetWorld()->SpawnActor<AActor>(
-				*usedClass,
-				DropLocation->GetComponentLocation(),
-				//GetActorLocation() + GetActorForwardVector() * 100.0f,
-				GetActorRotation());
-		}
-	}
-}
 
 void AActionCharacter::DropCurrentWeapon()
 {
