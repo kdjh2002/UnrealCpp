@@ -19,10 +19,10 @@ class UNREALCPP_API AConsumableWeapon : public AWeaponActor
 	
 public:
 	virtual void OnAttack() override;
-	virtual void OnWeaponPickuped() override;
+	virtual void OnWeaponPickuped(int InCount) override;
 
 	virtual bool CanAttack() override { return RemainingUseCount > 0; }
-
+	int32 GetRemainingUseCount() const { return RemainingUseCount; }
 	//virtual FOnConsume& GetOnConsumeDelegate() override { return OnWeaponUseEnded; };
 
 
