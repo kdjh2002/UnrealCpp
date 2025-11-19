@@ -122,6 +122,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Weapon")
 	TObjectPtr<class USceneComponent> DropLocation = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Weapon")
+	TObjectPtr<class UWeaponManagerComponent> WeaponManager = nullptr;
+
 
 	//IA_인풋 액션들 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
