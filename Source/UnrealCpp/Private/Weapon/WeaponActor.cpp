@@ -6,6 +6,7 @@
 #include "Player/ActionCharacter.h"
 #include "Player/StatusComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraComponent.h"
 
 
 // Sets default values
@@ -25,6 +26,8 @@ AWeaponActor::AWeaponActor()
 	WeaponCollision->SetupAttachment(WeaponMesh);
 	WeaponCollision->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));
 
+	WeaponSlashEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Effect"));
+	WeaponSlashEffect->SetupAttachment(WeaponMesh);
 }
 
 // Called when the game starts or when spawned
