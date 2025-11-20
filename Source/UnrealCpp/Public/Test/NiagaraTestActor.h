@@ -19,8 +19,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//virtual void ActorBeginOverlap() override;
 public:	
+	// 수정된 부분: override 키워드 제거
+	virtual void ActorBeginOverlap();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

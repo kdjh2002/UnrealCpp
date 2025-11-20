@@ -24,6 +24,11 @@ void ANiagaraTestActor::BeginPlay()
 	
 }
 
+void ANiagaraTestActor::ActorBeginOverlap()
+{
+
+}
+
 void ANiagaraTestActor::TestColorChange(FLinearColor& InColor)
 {
 	Effect->SetColorParameter(TEXT("EffectColor"), InColor);
