@@ -53,9 +53,9 @@ public:
 	UResourceComponent* GetResourceComponent() { return Resource; }
 	UStatusComponent* GetStatusComponent() { return Status; }
 
-	inline void SetSectionJumpNotify(class UAnimNotifyState_SectionJump* InSectionJumpNotify)
+	inline void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJumpNotify)
 	{
-		SectionJumpNotify = SectionJumpNotify;
+		SectionJumpNotify = InSectionJumpNotify;		//콤보 하나만될때 결정적 오류 주의
 		bComboReady = InSectionJumpNotify != nullptr;
 	}
 
@@ -104,7 +104,7 @@ private:
 	void SectionJumpForCombo();
 
 	//달리기용 스테미너 소비함수
-	void StandRunStamina(float DeltaTime);
+	void SpendRunStamina(float DeltaTime);
 
 	// 다 쓴 무기를 버리는 함수
 	void DropWeapon(EItemCode WeaponCode);
@@ -115,22 +115,22 @@ private:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
 	//TObjectPtr<USpringArmComponent> a = nullptr;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player| Resource")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
 	
 	////실습 - statusComponent
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Status")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Status")
 	TObjectPtr<class UStatusComponent> Status = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
 	TObjectPtr<class USceneComponent> DropLocation = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player| Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
 	TObjectPtr<class UWeaponManagerComponent> WeaponManager = nullptr;
 
 
@@ -194,7 +194,7 @@ protected:
 
 	//움직이기 T/F
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
-	bool bIsSprint = true;//canmove가 True여야 가능
+	bool bIsSprint = false;//canmove가 True여야 가능
 
 	//플레이어가 현재 가지고 있는 무기
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")

@@ -85,7 +85,7 @@ void AActionCharacter::Tick(float DeltaTime)
 
 	//CheckMove();
 
-	StandRunStamina(DeltaTime);
+	SpendRunStamina(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -225,34 +225,31 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
+	// 애님 인스턴스가 있고, 스태미너도 충분하고, 현재 무기가 공격을 할 수 있어야 한다.
 	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
-		&& (CurrentWeapon.IsValid()&& CurrentWeapon->CanAttack()))	// 애님 인스턴스가 있고 스태미너도 충분할때
+		&& (CurrentWeapon.IsValid() && CurrentWeapon->CanAttack()))
 	{
-		if (!AnimInstance->IsAnyMontagePlaying())//&& CurrentStamina > RollStaminaCost()
+		if (!AnimInstance->IsAnyMontagePlaying())	// 몽타주가 재생 중이 아닐 때
 		{
-			/*ActionCharacter->AttackEnable(false);*/
-			//첫 번째 공격
-			PlayAnimMontage(AttackMontage);
+			// 첫번째 공격			
+			PlayAnimMontage(AttackMontage);	// 몽타주 재생
 
 			FOnMontageEnded onMontageEnded;
 			onMontageEnded.BindUObject(this, &AActionCharacter::OnAttackMontageEnded);
-			AnimInstance->Montage_SetEndDelegate(onMontageEnded);	//몽타주가 끝났을 떄 델리게이트 발송(몽타주 플레이 이후에 등록해야함)
+			AnimInstance->Montage_SetEndDelegate(onMontageEnded);	// 몽타주가 끝났을 때 델리게이트 발송(몽타주 플레이 이후에 등록해야 함)
 
-			Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소
+			Resource->AddStamina(-AttackStaminaCost);	// 스태미너 감소
 			if (CurrentWeapon.IsValid())
 			{
-				CurrentWeapon->OnAttack();
+				CurrentWeapon->OnAttack();	// 무기 공격시 처리(회수 차감)
 			}
 		}
-		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)
-			// 몽타주가 재생 중인데, AttackMontage가 재생중이면
+		else if (AnimInstance->GetCurrentActiveMontage() == AttackMontage)	// 몽타주가 재생 중인데, AttackMontage가 재생중이면
 		{
 			// 콤보 공격
 			SectionJumpForCombo();
-
+		}
 	}
-}
-
 }
 
 void AActionCharacter::OnKickInput(const FInputActionValue& InValue)
@@ -266,6 +263,7 @@ void AActionCharacter::OnKickInput(const FInputActionValue& InValue)
 			//첫 번째 공격
 			PlayAnimMontage(KickMontage);
 			Resource->AddStamina(-KickStaminaCost);// -= 10.0f; //스테미너 감소
+			
 		}
 		else if (AnimInstance->GetCurrentActiveMontage() == KickMontage)
 			// 몽타주가 재생 중인데, AttackMontage가 재생중이면
@@ -330,26 +328,25 @@ void AActionCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterru
 
 void AActionCharacter::SectionJumpForCombo()
 {
-	if (SectionJumpNotify.IsValid() && bComboReady)  //SectionJumpNotify가 있고 콤보가 가능한 상태이면
+	if (SectionJumpNotify.IsValid() && bComboReady)	// SectionJumpNotify가 있고 콤보가 가능한 상태이면
 	{
-		UAnimMontage* current = AnimInstance->GetCurrentActiveMontage();	
-		AnimInstance->Montage_SetNextSection(		//다음섹션으로 점프하기
-			AnimInstance->Montage_GetCurrentSection(current),	//현재 섹션
-			SectionJumpNotify->GetNexSectionName(),	//다음 섹션의  이름
-			current);
+		UAnimMontage* current = AnimInstance->GetCurrentActiveMontage();
+		AnimInstance->Montage_SetNextSection(					// 다음 섹션으로 점프하기
+			AnimInstance->Montage_GetCurrentSection(current),		// 현재 섹션
+			SectionJumpNotify->GetNextSectionName(),				// 다음 섹션의 이름
+			current);												// 실행될 몽타주
 
-		bComboReady = false;	//중복 실행 방지
-		Resource->AddStamina(-AttackStaminaCost);// -= 10.0f; //스테미너 감소
-
+		bComboReady = false;	// 중복실행 방지
+		Resource->AddStamina(-AttackStaminaCost);	// 스태미너 감소
 		if (CurrentWeapon.IsValid())
-		{
+		{ 
 			CurrentWeapon->OnAttack();
 		}
 	}
 }
 
 
-void AActionCharacter::StandRunStamina(float DeltaTime)
+void AActionCharacter::SpendRunStamina(float DeltaTime)
 {
 	if ((bIsSprint && !GetVelocity().IsNearlyZero())	//달리기 상태이고 움직이지 않고 있다.
 		&& (AnimInstance.IsValid() && !AnimInstance->IsAnyMontagePlaying()))	//어떤 몽타쥬도 재생중이지 않다.(루트모션 때문에 Velocity 변경있음)

@@ -27,13 +27,13 @@ public:
 		UAnimSequenceBase* Animation, 
 		const FAnimNotifyEventReference& EventReference) override;
 
-	inline FName GetNexSectionName() const { return NextSectionName; }
+	inline FName GetNextSectionName() const { return NextSectionName; }
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SectionJump")
 	FName NextSectionName;
 
 
-protected:
+private:
 	UPROPERTY()
 
 	TWeakObjectPtr<class AActionCharacter> OwnerCharacter = nullptr;
