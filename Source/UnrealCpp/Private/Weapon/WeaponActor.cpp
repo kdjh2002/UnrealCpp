@@ -86,6 +86,11 @@ void AWeaponActor::WeaponActivate(bool bActivate)
 		SetActorRelativeLocation(FVector(0.0f, 0.0f, -10000.0f));	// 안보이는 곳에 배치
 		//SetActorEnableCollision(false);
 		//SetActorTickEnabled(false);
+
+		//컬리전과 트레일도 끄기
+		AttackEnable(false);
+		TrailEnable(false);
+		
 		OnWeaponDeactivate();
 	}
 		//보일것이냐 말거냐- 비지빌리티 - ㅇ
@@ -118,10 +123,25 @@ void AWeaponActor::AttackEnable(bool bEnable)
 	}
 }
 
+void AWeaponActor::TrailEnable(bool bEnable)
+{
+	if (bEnable)	//활성화됨
+	{
+		//재시작을 해야하는경우는
+		WeaponSlashEffect->Activate(true);		//나이아가라 처음부터 재시작
+	}
+	else 
+	{	//루프드레이션을 이어서 할수있는 버그생김
+		WeaponSlashEffect->Deactivate();		//재생중이던 나이아가라 정지
+	}
+}
+
 void AWeaponActor::OnWeaponPickuped(int InCount)
 {
-
+	// 무기 획득 시 처리할 기본 로직
+	//UE_LOG(LogTemp, Log, TEXT("Weapon [%s] Pickuped! Count = %d"), *GetName(), InCount);
 }
+
 
 void AWeaponActor::PostInitializeComponents()
 {

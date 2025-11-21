@@ -157,6 +157,18 @@ void AActionCharacter::OnAttackEnable(bool bEnable)
 	}
 }
 
+//무기에 이팩트가 달려있음으로 //너가 켰다 커라
+void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
+
+
+{
+	if (CurrentWeapon.IsValid())
+	{
+		CurrentWeapon->TrailEnable(bEnable);
+	}
+}
+
+
 void AActionCharacter::TestDropUsedWeapon()
 {
 	if (CurrentWeapon.IsValid())
