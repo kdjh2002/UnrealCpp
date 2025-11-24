@@ -3,6 +3,7 @@
 
 #include "Enemy/EnemyPawn.h"
 #include "Enemy/DamagePopupActor.h"
+#include "Framework/DamagePopupSubsystem.h"
 
 // Sets default values
 AEnemyPawn::AEnemyPawn()
@@ -45,12 +46,15 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 	//GEngine->AddOnScreenDebugMessage()
 	UE_LOG(LogTemp, Log, TEXT("Damage : %.1f"), Damage);
 
-	ADamagePopupActor* actor = GetWorld()->SpawnActor<ADamagePopupActor>(
-		DamagePopupClass, PopupLocation->GetComponentToWorld());
-	actor->PopupActivate();
+	//ADamagePopupActor* actor = GetWorld()->SpawnActor<ADamagePopupActor>(
+	//	DamagePopupClass, PopupLocation->GetComponentToWorld());
+	//actor->PopupActivate();
 
-	if (actor)
-	{
-		actor->PopupActivate(Damage);
-	}
+	//if (actor)
+	//{
+	//	actor->PopupActivate(Damage);
+	//}
+
+	UDamagePopupSubsystem* popupSystem = GetWorld()->GetSubsystem<UDamagePopupSubsystem>();
+	popupSystem->ShowDamagePopup(Damage, PopupLocation->GetComponentLocation());
 }
