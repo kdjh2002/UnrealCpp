@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Camera/CameraComponent.h"
 #include "Player/ResourceComponent.h"
 #include "Player/StatusComponent.h"
@@ -165,6 +166,16 @@ void AActionCharacter::OnWeaponTrailEnable(bool bEnable)
 	if (CurrentWeapon.IsValid())
 	{
 		CurrentWeapon->TrailEnable(bEnable);
+	}
+}
+
+void AActionCharacter::OnAreaAttack()
+{
+	//UE_LOG(LogTemp, Log, TEXT("OnAreaAttack"));
+	if (CurrentWeapon.IsValid())
+	{
+		//UE_LOG(LogTemp, Log, TEXT("OnAreaAttack : CurrentWeapon.IsValid()") );
+		CurrentWeapon->DamageToArea();
 	}
 }
 

@@ -49,6 +49,10 @@ public:
 
 	//노티파이어가 무기의 트레일을 표시하라고 신호가 왔을 떄 실행될 함수->WeaponTrail
 	void OnWeaponTrailEnable(bool bEnable);
+
+	// 노티파이가 범위 공격을 하라고 신호가 왔을 때 실행될 함수
+	void OnAreaAttack();
+
 	
 	UResourceComponent* GetResourceComponent() { return Resource; }
 	UStatusComponent* GetStatusComponent() { return Status; }

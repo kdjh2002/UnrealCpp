@@ -2,4 +2,20 @@
 
 
 #include "AnimNotify/AnimNotify_AreaAttack.h"
+#include "Player/ActionCharacter.h"
 
+void UAnimNotify_AreaAttack::Notify(class USkeletalMeshComponent* MeshComp, class UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
+{
+	Super::Notify(MeshComp, Animation, EventReference);
+
+	if (!OwnerCharacter.IsValid())
+	{
+		OwnerCharacter = Cast<AActionCharacter>(MeshComp->GetOwner());
+	}
+
+	if (OwnerCharacter.IsValid())
+	{
+		// 범위 공격 할 타이밍이라고 알려만 주기
+		OwnerCharacter->OnAreaAttack();
+	}
+}

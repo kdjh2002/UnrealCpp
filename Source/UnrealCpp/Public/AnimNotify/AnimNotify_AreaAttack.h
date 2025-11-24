@@ -18,9 +18,11 @@ class UNREALCPP_API UAnimNotify_AreaAttack : public UAnimNotify
 	//범위공격은 캐릭터가 결정
 
 public:
-	virtual void 
+	virtual void Notify(
+		USkeletalMeshComponent* MeshComp,
+		UAnimSequenceBase* Animation,
+		const FAnimNotifyEventReference& EventReference);
 
 private:
 	TWeakObjectPtr<class AActionCharacter> OwnerCharacter = nullptr;
-	
 };
