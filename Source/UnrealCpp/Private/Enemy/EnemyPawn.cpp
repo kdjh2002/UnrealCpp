@@ -6,6 +6,8 @@
 #include "Framework/DamagePopupSubsystem.h"
 #include "Framework/EnemyTrackingSubsystem.h"
 #include "Player/ResourceComponent.h"
+#include "Data/DropItemData_TableRow.h"
+#include "Item/Pickup.h"
 
 // Sets default values
 AEnemyPawn::AEnemyPawn()
@@ -117,7 +119,99 @@ void AEnemyPawn::OnTakeDamage(AActor* DamagedActor, float Damage, const UDamageT
 
 void AEnemyPawn::DropItems()
 {
+	/*for (const auto& item : DropItemInfo)
+	{
+		item.DropRate;
+		item.DropItemClass;
+	}*/
+	if (DropItemTable)
+	{
 
+		APickup* pickup = nullptr;
+		TMap<FName, uint8*> RowMap = DropItemTable -> GetRowMap();
+		//TArray<FDropItemData_TableRow*> AllRows;
+		//DropItemTable->GetAllRows<FDropItemData_TableRow>(TEXT("Rows"), AllRows);
+
+		
+		//중복으로 당첨 가능
+		for (const auto& element : RowMap)
+		{
+			pickup = nullptr;
+			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			if (FMath::FRand() <= row->DropRate)
+			{
+				GetWorld()->SpawnActor<APickup>(
+					row->DropItemClass,
+					GetActorLocation() + FVector::UpVector * 200.0f,
+					GetActorRotation());
+			}
+
+			if (pickup)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Drop Succes : %s"), *pickup->GetName());
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Drop empty"));
+
+			}
+		}
+
+		////한개만 확률에 따라 체크하기
+		//int32 count = RowMap.Num();
+		//int32 select = FMath::RandRange(0, count-1);
+		//FDropItemData_TableRow* row = nullptr;
+		//	int temp = 0;
+		//for (auto& element : RowMap)
+		//{
+		//	if (temp == select)
+		//	{
+		//		row = (FDropItemData_TableRow*)element.Value;
+		//		break;
+		//	}
+		//}
+		//if (FMath::FRand() <= row->DropRate)
+		//{
+		//	GetWorld()->SpawnActor<APickup>(
+		//		row->DropItemClass,
+		//		GetActorLocation() + FVector::UpVector * 200.0f,
+		//		GetActorRotation()
+		//	);
+		//}
+		//else
+		//{
+		//	//꽝 스폰
+		//}
+		
+		//그외
+		//FMath::FRand()로 0.0~1.0 값을 구함
+		//데이터 테이블에 (0.1 한개, 0.2 한개 0.3 한개) -> (0.1, 0.3, 0.6)
+		
+		//전체 가중치 사용하는 방식(한개만 뽑는것)
+		float totalWeight = 0.0f;
+		for (const auto& element : RowMap)
+		{
+			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			totalWeight += row->DropRate;
+			//넘어갈때마다 배열로 처리해도 굿~
+		}
+		float randomSelect = FMath::FRandRange(0, totalWeight);
+		float currentWeight = 0.0f;
+		for (const auto& element : RowMap)
+		{
+			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			currentWeight += row->DropRate;
+			if (randomSelect < currentWeight)
+			{
+				//당첨 -> 스폰처리
+				GetWorld()->SpawnActor<APickup>(
+					row->DropItemClass,
+					GetActorLocation() + FVector::UpVector * 200.0f,
+					GetActorRotation());
+				break;
+			}
+		}
+	}
 }
 
 void AEnemyPawn::OnDie()
