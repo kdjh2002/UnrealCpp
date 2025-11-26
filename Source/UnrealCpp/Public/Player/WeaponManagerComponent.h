@@ -24,10 +24,18 @@ public:
 	UWeaponManagerComponent();
 
 	//
-	AWeaponActor* GetEquippedWeapon(EItemCode InType) const;
-	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EItemCode InType) const; 
-	TSubclassOf<APickup> GetPickupWeaponClass(EItemCode InType) const;
+	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;
+	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EWeaponCode InType) const; 
+	TSubclassOf<APickup> GetPickupWeaponClass(EWeaponCode InType) const;
 
+	inline EItemCode GetItemCode(EWeaponCode Code) const
+	{
+		return WeaponCodeToItemCode[Code];
+	};
+	inline EWeaponCode GEtWeaponCode(EItemCode Code) const
+	{
+		return ItemCodeToWeaponCode[Code];
+	};
 
 protected:
 	// Called when the game starts
@@ -43,12 +51,15 @@ private:
 protected:
 	//이 컴포넌트가 관리하는 무기 클래스
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon Database")
-	TMap<EItemCode, TObjectPtr<UWeaponDataAsset>> WeaponDatabase;
+	TMap<EWeaponCode, TObjectPtr<UWeaponDataAsset>> WeaponDatabase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Instance")
-	TMap<EItemCode, TObjectPtr<AWeaponActor>> WeaponInstances;
+	TMap<EWeaponCode, TObjectPtr<AWeaponActor>> WeaponInstances;
 
 private:
 	UPROPERTY()
 	TWeakObjectPtr<class AActionCharacter> OwnerPlayer = nullptr;
+
+	TMap<EItemCode, EWeaponCode> ItemCodeToWeaponCode;
+	TMap<EWeaponCode, EItemCode> WeaponCodeToItemCode;
 };

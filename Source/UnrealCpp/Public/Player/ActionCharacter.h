@@ -41,7 +41,7 @@ public:
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void EquipWeapon(EItemCode WeaponCode);
+	void EquipWeapon(EWeaponCode WeaponCode);
 
 
 	//노티파이가 공격을 가능하게 만들라는 신호가 왔을떄 실행될 함수
@@ -111,10 +111,10 @@ private:
 	void SpendRunStamina(float DeltaTime);
 
 	// 다 쓴 무기를 버리는 함수
-	void DropWeapon(EItemCode WeaponCode);
+	void DropWeapon(EWeaponCode WeaponCode);
 
 	//사용 중이던 무기를 버리는 함수
-	void DropCurrentWeapon(EItemCode WeaponCode);
+	void DropCurrentWeapon(EWeaponCode WeaponCode);
 
 
 protected:
