@@ -8,7 +8,7 @@
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "Common/CommonEnums.h"
 #include "InventoryOwner.h"
-#include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지ㅏㅁㄱ
+#include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지막
 
 
 class UInputAction; 

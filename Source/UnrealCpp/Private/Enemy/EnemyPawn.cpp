@@ -5,8 +5,9 @@
 #include "Enemy/DamagePopupActor.h"
 #include "Framework/DamagePopupSubsystem.h"
 #include "Framework/EnemyTrackingSubsystem.h"
+#include "Framework/PickupFactorySubsystem.h"
 #include "Player/ResourceComponent.h"
-#include "Data/DropItemData_TableRow.h"
+#include "Data/DataTableRow.h"
 #include "Item/Pickup.h"
 
 // Sets default values
@@ -137,13 +138,19 @@ void AEnemyPawn::DropItems()
 		for (const auto& element : RowMap)
 		{
 			pickup = nullptr;
-			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			FDropItemData_v2_TableRow* row = (FDropItemData_v2_TableRow*)element.Value;
 			if (FMath::FRand() <= row->DropRate)
 			{
-				GetWorld()->SpawnActor<APickup>(
+				/*GetWorld()->SpawnActor<APickup>(
 					row->DropItemClass,
 					GetActorLocation() + FVector::UpVector * 200.0f,
-					GetActorRotation());
+					GetActorRotation());*/
+
+				pickup = GetWorld()->GetSubsystem<UPickupFactorySubsystem>()->SpawnPickup(
+					row->PickupCode,
+					GetActorLocation() + FVector::UpVector * 200.0f,
+					GetActorRotation()
+					);
 			}
 
 			if (pickup)
@@ -191,7 +198,7 @@ void AEnemyPawn::DropItems()
 		float totalWeight = 0.0f;
 		for (const auto& element : RowMap)
 		{
-			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
 			totalWeight += row->DropRate;
 			//넘어갈때마다 배열로 처리해도 굿~
 		}
@@ -199,7 +206,7 @@ void AEnemyPawn::DropItems()
 		float currentWeight = 0.0f;
 		for (const auto& element : RowMap)
 		{
-			FDropItemData_TableRow* row = (FDropItemData_TableRow*)element.Value;
+			FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
 			currentWeight += row->DropRate;
 			if (randomSelect < currentWeight)
 			{
