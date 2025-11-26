@@ -32,7 +32,7 @@ APickup* UPickupFactorySubsystem::SpawnPickup(EItemCode InCode, FVector InLocati
 void UPickupFactorySubsystem::LoadPickupClassesMap()
 {//실제로 불러와야함 //세팅있어야함
 	const UPickupSettings* settings = GetDefault<UPickupSettings>();
-	if (settings && !settings->PickupDataTable.IsNull())
+	if (settings && !settings->PickupDataTable.IsNull()) //할당이 되어있으면
 	{
 		UDataTable* dataTable = settings->PickupDataTable.LoadSynchronous();	//이제 불러와라
 		if (dataTable)

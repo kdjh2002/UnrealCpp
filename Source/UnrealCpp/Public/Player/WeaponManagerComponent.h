@@ -23,8 +23,8 @@ public:
 	// Sets default values for this component's properties
 	UWeaponManagerComponent();
 
-	//
-	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;
+	//Itemcode랑 Weaponcode 구별함 
+	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;	
 	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EWeaponCode InType) const; 
 	TSubclassOf<APickup> GetPickupWeaponClass(EWeaponCode InType) const;
 
