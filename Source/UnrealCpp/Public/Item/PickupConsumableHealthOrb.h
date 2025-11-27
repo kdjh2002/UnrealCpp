@@ -13,5 +13,12 @@ UCLASS()
 class UNREALCPP_API APickupConsumableHealthOrb : public APickupConsumable
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "HealOrb")
+	float HealAmount = 30.0f;
+
+protected:
+	virtual void OnConsume() override;
 	
 };

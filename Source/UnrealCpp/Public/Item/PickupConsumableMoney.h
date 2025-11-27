@@ -7,11 +7,17 @@
 #include "PickupConsumableMoney.generated.h"
 
 /**
- * 
+ * 파생클래스 
  */
 UCLASS()
 class UNREALCPP_API APickupConsumableMoney : public APickupConsumable
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	int32 Money = 100;
+protected:
+	virtual void OnConsume() override;
+
 	
 };

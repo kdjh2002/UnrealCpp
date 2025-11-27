@@ -38,7 +38,7 @@ APickup::APickup()
 
 	PickupOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap"));
 	PickupOverlap->SetupAttachment(BaseRoot);
-	PickupOverlap->InitSphereRadius(100.0f);	//픽업안되면 //setSphere인지 확인
+	PickupOverlap->InitSphereRadius(200.0f);	//픽업안되면 //setSphere인지 확인
 	//PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn")); //생성 직후는 바로 먹을 수 없다
 	PickupOverlap->SetCollisionProfileName(TEXT("NoCollision"));
 
@@ -59,16 +59,16 @@ void APickup::BeginPlay()
 	{
 		if(ScaleCurve)
 		{
-		FOnTimelineFloat UpdateDelegate;
-		UpdateDelegate.BindUFunction(this, FName("OnTimelineUpdate"));
-		PickupTimeline->AddInterpFloat(DistanceCurve, UpdateDelegate);
-
-		FOnTimelineEvent FinishedDelegate;
-		FinishedDelegate.BindUFunction(this, FName("OnTimelineFinished"));
-		PickupTimeline->SetTimelineFinishedFunc(FinishedDelegate);
+			FOnTimelineFloat UpdateDelegate;
+			UpdateDelegate.BindUFunction(this, FName("OnTimelineUpdate"));
+			PickupTimeline->AddInterpFloat(DistanceCurve, UpdateDelegate);
+	
+			FOnTimelineEvent FinishedDelegate;
+			FinishedDelegate.BindUFunction(this, FName("OnTimelineFinished"));
+			PickupTimeline->SetTimelineFinishedFunc(FinishedDelegate);
 		}
 
-	PickupTimeline->SetPlayRate(1 / Duration);
+	PickupTimeline->SetPlayRate(1/Duration);
 	}
 
 	FTimerManager& timerManager = GetWorldTimerManager();
@@ -111,7 +111,7 @@ void APickup::OnPickup_Implementation(AActor* Target)
 
 void APickup::OnPickupComplete_Implementation()
 {
-	Destroy();
+	Destroy();// 자기 자신 삭제
 }
 
 

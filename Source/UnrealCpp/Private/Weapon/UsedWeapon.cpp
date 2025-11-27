@@ -27,7 +27,7 @@ void AUsedWeapon::BeginPlay()
 
 	FVector dir = GetActorForwardVector() + GetActorUpVector();
 	FVector worldLocation = GetActorLocation() + ForceLocation->GetRelativeLocation();
-	Mesh->AddImpulseAtLocation(dir * Force, worldLocation, NAME_None);
+	Mesh->AddVelocityChangeImpulseAtLocation(dir * Force, worldLocation, NAME_None);
 }
 
 

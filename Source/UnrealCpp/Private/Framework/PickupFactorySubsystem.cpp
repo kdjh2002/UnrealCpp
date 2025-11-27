@@ -3,14 +3,14 @@
 
 #include "Framework/PickupFactorySubsystem.h"
 #include "Settings/PickupSettings.h"
-#include "Data/DataTableRow.h"
+#include "Data/DataTableRows.h"
 
 void UPickupFactorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	UE_LOG(LogTemp, Log, TEXT("UPickupFactorySubsystem : 초기화 시작."));
 
 	LoadPickupClassesMap();
-	UE_LOG(LogTemp, Log, TEXT("UPickupFactorySubsystem : 초기화 시작."));
 
 }
 

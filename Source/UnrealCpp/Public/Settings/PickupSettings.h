@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(Config = Game, Defaultconfig, meta = (DisplayName = "All Pickup Settings"))
+UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "All Pickup Settings"))
 class UNREALCPP_API UPickupSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()

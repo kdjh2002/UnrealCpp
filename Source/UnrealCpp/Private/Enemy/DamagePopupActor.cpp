@@ -42,10 +42,11 @@ void ADamagePopupActor::PopupActivate(float Damage)
 
 void ADamagePopupActor::PopupDeactivate()
 {
-	//UE_LOG(LogTemp, Log, TEXT("Damage : %.1f"), Damage);
+	//UE_LOG(LogTemp, Log, TEXT("PopupDeactivate"));
 	if (UWorld* world = GetWorld())
 	{
-		if (UDamagePopupSubsystem* PoolSystem = world->GetSubsystem<UDamagePopupSubsystem>()) {
+		if (UDamagePopupSubsystem* PoolSystem = world->GetSubsystem<UDamagePopupSubsystem>()) 
+		{
 			PoolSystem->ReturnToPool(this);
 		}
 		else

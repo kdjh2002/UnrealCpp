@@ -53,7 +53,7 @@ protected:
 	void Test_UFunction();
 
 	//BlueprintImplementableEvent : //C++로 작성한 함수를 블루프린트에서 호출할 수 있다.
-	UFUNCTION(BlueprintImplementableEvent, Category = "내 함수")
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "내 함수")
 	void Test_ImplementableFunction();
 
 	//BlueprintNative
@@ -70,22 +70,22 @@ public:
 protected:
 	int32 Data1 = 10;
 
-	UPROPERTY(VisibleAnyWhere, Category = "Test변수")
+	UPROPERTY(VisibleAnywhere, Category = "Test변수") 	// 클래스 디폴트나 인스턴스에서 보기 가능
 	int32 Data2 = 20;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Test변수")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Test변수")	// 클래스 디폴트 창에서만 보기 가능
 	int32 Data3 = 30;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Test변수")
+	UPROPERTY(VisibleInstanceOnly, Category = "Test변수")	// 맵에 배치된 상태에서만 디테일창으로 보기 가능
 	int32 Data4 = 40;
 
-	UPROPERTY(EditAnyWhere, Category = "Test변수")
+	UPROPERTY(EditAnywhere, Category = "Test변수")	// 클래스 디폴트나 인스턴스에서 편집 가능
 	int32 Data5 = 50;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Test변수")
+	UPROPERTY(EditDefaultsOnly, Category = "Test변수")	// 클래스 디폴트 창에서만 편집 가능
 	int32 Data6 = 60;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Test변수") // 맵에 배치된 상태에서만 가능
+	UPROPERTY(EditInstanceOnly, Category = "Test변수") // 맵에 배치된 상태에서만 가능
 	int32 Data7 = 70;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Test변수")	//블루프린트 쪽에서 읽기만 간으
@@ -94,6 +94,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Test변수")		//블루프린트 쪽에서 읽고 쓰기 기능
 	int32 Data9 = 90;
 
-	UPROPERTY(VisibleAnywhere, Category = "Test변수")		//확인은 어디서든 할 수 있고 블루프린트에서 읽고 쓰기
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Test변수")		//확인은 어디서든 할 수 있고 블루프린트에서 읽고 쓰기
 	int32 Data10 = 100;
 };

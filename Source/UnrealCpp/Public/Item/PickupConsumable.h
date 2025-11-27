@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ITem/Pickup.h"
+#include "Item/Pickup.h"
+#include "Data/Consumable/ConsumableDataAsset.h"
 #include "PickupConsumable.generated.h"
 
 /**
@@ -15,6 +16,14 @@ class UNREALCPP_API APickupConsumable : public APickup
 	GENERATED_BODY()
 
 public:
-	virtual void OnPickupComplete_Implementation();
+	virtual void OnPickupComplete_Implementation() override;
+
+
+protected:
+	virtual void OnConsume();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UConsumableDataAsset> DataAsset = nullptr;
 	
 };

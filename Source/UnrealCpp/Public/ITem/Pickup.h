@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "Pickupable.h"
 #include "Common/CommonEnums.h"
-#include "Components/TimelineComponent.h"
 #include "Pickup.generated.h"
 
 UCLASS()
@@ -76,7 +75,7 @@ protected:
 	float PickupableTime = 3.0f;
 
 	//아이템 회전을 위한 속도
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Pickup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float RotateSpeed = 180.0f;
 
 	// 픽업 획득 효과용 거리 보간 커브

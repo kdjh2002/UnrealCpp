@@ -39,6 +39,6 @@ protected:
 	FLinearColor FillColor = FLinearColor(0.0f, 1.0f, 0.0f); // FLinearColor::Green
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Color")
-	FLinearColor BackgroundColor = FLinearColor(0.0f, 1.0f, 0.0f); // FLinearColor::Green
+	FLinearColor BackgroundColor = FLinearColor(0.0f, 1.0f, 0.0f, 0.2f); // FLinearColor::Green
 
 };

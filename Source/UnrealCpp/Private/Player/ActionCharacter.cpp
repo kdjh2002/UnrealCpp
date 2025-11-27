@@ -137,6 +137,33 @@ void AActionCharacter::AddWeapon_Implementation(EWeaponCode Code, int32 UseCount
 	CurrentWeapon->OnWeaponPickuped(UseCount);
 }
 
+void AActionCharacter::AddMoney_Implementation(int32 Income)
+{
+	UE_LOG(LogTemp, Log, TEXT("돈 (%d) 골드를 획득했습니다."), Income);
+}
+
+void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
+{
+	UE_LOG(LogTemp, Log, TEXT("돈 (%d) 골드를 사용했습니다."), Expense);
+
+}
+
+void AActionCharacter::HealHealth_Implementation(float InHeal)
+{
+	if (Resource)
+	{
+		Resource->AddHealth(InHeal);
+	}
+}
+
+void AActionCharacter::DamageHealth_Implementation(float InDamage)
+{
+	if (Resource)
+	{
+		Resource->AddHealth(-InDamage);
+	}
+}
+
 void AActionCharacter::EquipWeapon(EWeaponCode WeaponCode)
 {
 	if (CurrentWeapon.IsValid())
@@ -225,8 +252,8 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 {
-		if (AnimInstance.IsValid())
-		{
+	if (AnimInstance.IsValid())
+	{
 			if(!AnimInstance->IsAnyMontagePlaying() //&& CurrentStamina > RollStaminaCost()
 				&& Resource->HasEnoughStamina(RollStaminaCost))	// 몽타주 재생중이 아니고 충분한 스태미너가 있을 때만 작동
 			{
@@ -275,25 +302,25 @@ void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnKickInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid()
-		&& Resource->HasEnoughStamina(KickStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할때
+	//if (AnimInstance.IsValid()
+	//	&& Resource->HasEnoughStamina(KickStaminaCost))	// 애님 인스턴스가 있고 스태미너도 충분할때
 
-	{
-		if (!AnimInstance->IsAnyMontagePlaying())//&& CurrentStamina > RollStaminaCost()
-		{
-			//첫 번째 공격
-			PlayAnimMontage(KickMontage);
-			Resource->AddStamina(-KickStaminaCost);// -= 10.0f; //스테미너 감소
-			
-		}
-		else if (AnimInstance->GetCurrentActiveMontage() == KickMontage)
-			// 몽타주가 재생 중인데, AttackMontage가 재생중이면
-		{
-			// 콤보 공격
-			//SectionKickForCombo();
+	//{
+	//	if (!AnimInstance->IsAnyMontagePlaying())//&& CurrentStamina > RollStaminaCost()
+	//	{
+	//		//첫 번째 공격
+	//		PlayAnimMontage(KickMontage);
+	//		Resource->AddStamina(-KickStaminaCost);// -= 10.0f; //스테미너 감소
+	//		
+	//	}
+	//	else if (AnimInstance->GetCurrentActiveMontage() == KickMontage)
+	//		// 몽타주가 재생 중인데, AttackMontage가 재생중이면
+	//	{
+	//		// 콤보 공격
+	//		//SectionKickForCombo();
 
-		}
-	}
+	//	}
+	//}
 
 }
 
@@ -302,7 +329,7 @@ void AActionCharacter::SetSprintMode()
 {
 
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
+	//UE_LOG(LogTemp, Warning, TEXT("달리기 모드"));
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
 	bIsSprint = true;
 
@@ -310,7 +337,7 @@ void AActionCharacter::SetSprintMode()
 
 void AActionCharacter::SetWalkMode()
 {
-	UE_LOG(LogTemp, Warning, TEXT("걷기 모드"));
+//	UE_LOG(LogTemp, Warning, TEXT("걷기 모드"));
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	bIsSprint = false;
 

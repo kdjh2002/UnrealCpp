@@ -1,0 +1,22 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Item/PickupConsumable.h"
+#include "PickupConsumableMoney.generated.h"
+
+/**
+ * 파생클래스 
+ */
+UCLASS()
+class UNREALCPP_API APickupConsumableMoney : public APickupConsumable
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(Edit)
+protected:
+	virtual void OnConsume() override;
+
+	
+};

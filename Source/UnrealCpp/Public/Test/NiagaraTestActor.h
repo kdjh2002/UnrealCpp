@@ -21,13 +21,12 @@ protected:
 
 public:	
 	// 수정된 부분: override 키워드 제거
-	virtual void ActorBeginOverlap();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintCallable, Category = "VALUE")
-	void TestColorChange(FLinearColor& InColor);
+	UFUNCTION(BlueprintCallable, Category = "Test")
+	void TestColorChange(const FLinearColor& InColor);
 
 
 protected:

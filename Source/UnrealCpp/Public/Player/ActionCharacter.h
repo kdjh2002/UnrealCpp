@@ -6,8 +6,8 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
-#include "Common/CommonEnums.h"
-#include "InventoryOwner.h"
+#include "Player/InventoryOwner.h"
+#include "Player/HasHealth.h"
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지막
 
 
@@ -17,7 +17,7 @@ class UResourceComponent;
 class UStatusComponent;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth
 {
 	GENERATED_BODY()
 
@@ -39,7 +39,12 @@ public:
 	// 아이템 추가 인터페이스 함수 구현
 	virtual void AddItem_Implementation(EItemCode Code, int32 ItemCount) override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
+	virtual void AddMoney_Implementation(int32 Income) override;
+	virtual void RemoveMoney_Implementation(int32 Expense) override;
 
+	//IHasHealth 
+	virtual void HealHealth_Implementation(float InHeal) override;
+	virtual void DamageHealth_Implementation(float InDamage) override;
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void EquipWeapon(EWeaponCode WeaponCode);
@@ -129,13 +134,13 @@ protected:
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
 	
 	////실습 - statusComponent
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Status")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Status")
 	TObjectPtr<class UStatusComponent> Status = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TObjectPtr<class USceneComponent> DropLocation = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
+	TObjectPtr<USceneComponent> DropLocation = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
 	TObjectPtr<class UWeaponManagerComponent> WeaponManager = nullptr;
 
 
@@ -194,8 +199,8 @@ protected:
 	float AttackStaminaCost = 15.0f;
 
 	// 킥을 하기 위해 필요한 스태미너 비용
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	float KickStaminaCost = 20.0f;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
+	//float KickStaminaCost = 20.0f;
 
 	//움직이기 T/F
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
@@ -223,7 +228,7 @@ private:
 	//헤더 넣어줌
 
 	////플레이어가 현재 가지고 있는지 아닌지
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon", meta = (AllowPrivateAccess = "true"))
 	//bool bWeaponUseEnded = false;
 
 	//콤보가 가능한 상황인지 확인하기 위한 플래그

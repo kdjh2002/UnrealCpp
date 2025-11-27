@@ -32,7 +32,7 @@ public:
 	void TestDropItemCounts(); //테스트
 
 	UFUNCTION(BlueprintCallable)
-	void TestDropItem(float BounsChange){ DropItems(BounsChange); }; //테스트
+	void TestDropItem(float BonusChange){ DropItems(BonusChange); }; //테스트
 
 private:
 	UFUNCTION()

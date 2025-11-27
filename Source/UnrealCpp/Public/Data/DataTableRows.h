@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
 #include "Common/CommonEnums.h"
-#include "DataTableRow.generated.h"
+#include "DataTableRows.generated.h"
 
 /**
  * 
@@ -44,6 +44,7 @@ struct FPickData_TableRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup")
 	EItemCode PickupCode = EItemCode::BasicWeapon;
 

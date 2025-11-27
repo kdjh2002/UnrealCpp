@@ -7,7 +7,7 @@
 #include "Framework/EnemyTrackingSubsystem.h"
 #include "Framework/PickupFactorySubsystem.h"
 #include "Player/ResourceComponent.h"
-#include "Data/DataTableRow.h"
+#include "Data/DataTableRows.h"
 #include "Item/Pickup.h"
 
 // Sets default values
@@ -193,7 +193,7 @@ void AEnemyPawn::DropItems(float BonusChange)
 
 			if (pickup)
 			{
-				UE_LOG(LogTemp, Log, TEXT("Drop Succes : %s"), *pickup->GetName());
+				UE_LOG(LogTemp, Log, TEXT("Drop Success : %s"), *pickup->GetName());
 			}
 			else
 			{

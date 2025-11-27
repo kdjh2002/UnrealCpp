@@ -39,9 +39,10 @@ protected:
 	TObjectPtr<UInputAction>IA_Look;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Pitch")
-	float VewPitchMax = 30;
 	float VewPitchMin = -40;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera|Pitch")
+	float VewPitchMax = 30;
 private:
 	int32 GameInputPriority = 1;
 

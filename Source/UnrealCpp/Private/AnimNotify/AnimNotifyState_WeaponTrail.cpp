@@ -19,8 +19,7 @@ void UAnimNotifyState_WeaponTrail::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	}
 	else
 	{
-		//
-		UE_LOG(LogTemp, Warning, TEXT("UAnimNotiftState_WeaponTrail::NotifyBegin : OwnerCharacter가 유효하지 않습니다."));
+		//UE_LOG(LogTemp, Warning, TEXT("UAnimNotifyState_WeaponTrail::NotifyBegin : OwnerCharacter가 유효하지 않습니다."));
 	}
 }
 
@@ -32,7 +31,7 @@ void UAnimNotifyState_WeaponTrail::NotifyEnd(USkeletalMeshComponent* MeshComp, U
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UAnimNotiftState_WeaponTrail::NotifyBegin : OwnerCharacter가 유효하지 않습니다."));
+		//UE_LOG(LogTemp, Warning, TEXT("UAnimNotifyState_WeaponTrail::NotifyBegin : OwnerCharacter가 유효하지 않습니다."));
 
 	}
 	Super::NotifyEnd(MeshComp, Animation, EventReference);

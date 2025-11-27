@@ -12,7 +12,6 @@ void APickupWeapon::OnPickupComplete_Implementation()
 	{
 		IInventoryOwner::Execute_AddWeapon(PickupOwner.Get(), PickupWeapon, UseCount);
 	}
-	Destroy();	//자기자신 삭제
 
 	Super::OnPickupComplete_Implementation();	//자기자신을 삭제시키기 때문0에 마지막에 처리
 }

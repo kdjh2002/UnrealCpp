@@ -32,7 +32,7 @@ public:
 	{
 		return WeaponCodeToItemCode[Code];
 	};
-	inline EWeaponCode GEtWeaponCode(EItemCode Code) const
+	inline EWeaponCode GetWeaponCode(EItemCode Code) const
 	{
 		return ItemCodeToWeaponCode[Code];
 	};

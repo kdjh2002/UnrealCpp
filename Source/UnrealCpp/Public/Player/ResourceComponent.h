@@ -36,7 +36,7 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);	// 체력 
 
 
 UCLASS( Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class UResourceComponent : public UActorComponent
+class UNREALCPP_API UResourceComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -62,7 +62,7 @@ public:
 
 	//생존 여부 확인용 함수
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	inline bool IsAlive() { return CurrentHealth > 0; }
+	inline bool IsAlive() const { return CurrentHealth > 0; }
 
 	inline float GetCurrentHealth() const { return CurrentHealth; }
 	inline float GetMaxHealth() const { return MaxHealth; }
@@ -78,7 +78,7 @@ public:
 	//------------------
 	inline void SetMaxHealth(float InValue) {
 		MaxHealth = InValue;
-		OnHealthChanged.Broadcast(MaxHealth, MaxHealth);
+		OnHealthChanged.Broadcast(CurrentHealth, MaxHealth);
 	};
 	inline void SetMaxStamina(float InValue) {
 		MaxStamina = InValue;
@@ -134,13 +134,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data|Health")
 	float MaxHealth = 100.0f;
 
+	//현재 스테미너(값을 설정할 때 SetCurrentStamina로 설정할 것)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data | Stamina")
+	float CurrentStamina = 100.0f;
+
 	//최대 스테미너
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data | Stamina")
 	float MaxStamina = 100.0f;
-
-	//현재 스테미너
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data | Stamina")
-	float CurrentStamina = 0.0f;
 
 	//스테미너가 자동 회복되는데 걸리는 시간
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data | Stamina")
@@ -163,7 +163,7 @@ protected:
 	//float StaminaRegenRatePerTick = 0.1f;
 
 private:
-	//float TimeSinceLastStamina = 0.0f;
+	//float TimeSinceLastStaminaUse = 0.0f;
 	//bool bRegenStamina = false;
 
 	FTimerHandle StaminaAutoRegenCoolTimer;	//스테미너가 자동 회복용 타이머 핸들

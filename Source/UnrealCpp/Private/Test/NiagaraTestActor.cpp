@@ -2,7 +2,7 @@
 
 
 #include "Test/NiagaraTestActor.h"
-#include "Niagaracomponent.h"
+#include "NiagaraComponent.h"
 // Sets default values
 ANiagaraTestActor::ANiagaraTestActor()
 {
@@ -24,21 +24,17 @@ void ANiagaraTestActor::BeginPlay()
 	
 }
 
-void ANiagaraTestActor::ActorBeginOverlap()
-{
-
-}
-
-void ANiagaraTestActor::TestColorChange(FLinearColor& InColor)
-{
-	Effect->SetColorParameter(TEXT("EffectColor"), InColor);
-	//Effect->SetNiagaraVariableLinearColor(TEXT("EffectColor"), InColor);
-}
-
 // Called every frame
 void ANiagaraTestActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+}
+
+void ANiagaraTestActor::TestColorChange(const FLinearColor& InColor)
+{
+	Effect->SetColorParameter(TEXT("EffectColor"), InColor);
+	//Effect->SetNiagaraVariableLinearColor(TEXT("EffectColor"), InColor);
 
 }
 

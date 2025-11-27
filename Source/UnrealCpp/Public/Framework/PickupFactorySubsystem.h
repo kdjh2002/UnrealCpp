@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
-#include "ITem/Pickup.h"
+#include "Item/Pickup.h"
 #include "PickupFactorySubsystem.generated.h"
 
 /**

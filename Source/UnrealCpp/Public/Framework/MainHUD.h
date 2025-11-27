@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class AMainHUD : public AHUD
+class UNREALCPP_API AMainHUD : public AHUD
 {
 	GENERATED_BODY()
 
