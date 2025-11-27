@@ -26,7 +26,7 @@ public:
 	//Itemcode랑 Weaponcode 구별함 
 	AWeaponActor* GetEquippedWeapon(EWeaponCode InType) const;	
 	TSubclassOf<AUsedWeapon> GetUsedWeaponClass(EWeaponCode InType) const; 
-	TSubclassOf<APickup> GetPickupWeaponClass(EWeaponCode InType) const;
+	TSubclassOf<APickupWeapon> GetPickupWeaponClass(EWeaponCode InType) const;
 
 	inline EItemCode GetItemCode(EWeaponCode Code) const
 	{

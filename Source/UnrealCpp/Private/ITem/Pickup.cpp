@@ -38,7 +38,7 @@ APickup::APickup()
 
 	PickupOverlap = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap"));
 	PickupOverlap->SetupAttachment(BaseRoot);
-	PickupOverlap->SetSphereRadius(100.0f);
+	PickupOverlap->InitSphereRadius(100.0f);	//픽업안되면 //setSphere인지 확인
 	//PickupOverlap->SetCollisionProfileName(TEXT("OverlapOnlyPawn")); //생성 직후는 바로 먹을 수 없다
 	PickupOverlap->SetCollisionProfileName(TEXT("NoCollision"));
 
@@ -63,9 +63,9 @@ void APickup::BeginPlay()
 		UpdateDelegate.BindUFunction(this, FName("OnTimelineUpdate"));
 		PickupTimeline->AddInterpFloat(DistanceCurve, UpdateDelegate);
 
-		FOnTimelineEvent FinishDelegate;
-		FinishDelegate.BindUFunction(this, FName("OnTimelineFinished"));
-		PickupTimeline->SetTimelineFinishedFunc(FinishDelegate);
+		FOnTimelineEvent FinishedDelegate;
+		FinishedDelegate.BindUFunction(this, FName("OnTimelineFinished"));
+		PickupTimeline->SetTimelineFinishedFunc(FinishedDelegate);
 		}
 
 	PickupTimeline->SetPlayRate(1 / Duration);
@@ -109,6 +109,12 @@ void APickup::OnPickup_Implementation(AActor* Target)
 	}
 }
 
+void APickup::OnPickupComplete_Implementation()
+{
+	Destroy();
+}
+
+
 void APickup::AddImpulse(FVector& Velocity)
 {
 	BaseRoot->AddImpulse(Velocity, NAME_None, true);
@@ -118,13 +124,13 @@ void APickup::AddImpulse(FVector& Velocity)
 void APickup::OnTimelineUpdate(float Value)
 {
 	//타임라인 진행 시간(0~1)
-	float CurrentTime = PickupTimeline->GetPlaybackPosition();
+	float currentTime = PickupTimeline->GetPlaybackPosition();
 
 	//커브의 현재 값 받아오기
 	float distanceValue = Value;
 	//DistanceCurve ? DistanceCurve->GetFloatValue(CurrentTime);
-	float heightValue = HeightCurve ? HeightCurve->GetFloatValue(CurrentTime): 0.0f;
-	float ScaleValue = ScaleCurve ? ScaleCurve->GetFloatValue(CurrentTime): 1.0f;
+	float heightValue = HeightCurve ? HeightCurve->GetFloatValue(currentTime): 0.0f;
+	float scaleValue = ScaleCurve ? ScaleCurve->GetFloatValue(currentTime): 1.0f;
 
 	/*FVector NewLocation = FMath::Lerp(TargetLocation, StartLocation, Value);
 	SetActorLocation(NewLocation);*/
@@ -134,17 +140,18 @@ void APickup::OnTimelineUpdate(float Value)
 	NewLocation += heightValue * PickupHeight * FVector::UpVector;
 	Mesh->SetWorldLocation(NewLocation);
 
-	FVector NewScale = FVector::One() * ScaleValue;
-	SetActorScale3D(NewScale);
+	FVector NewScale = FVector::One() * scaleValue;
+	Mesh->SetRelativeScale3D(NewScale);
 
 }
 
 void APickup::OnTimelineFinished()
 {
-	// 자신을 먹은 대상에게 자기가 가지고 있는 무기를 알려줘야 함
-	if (PickupOwner.IsValid() && PickupOwner->Implements<UInventoryOwner>())
-	{
-		IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem,PickupCount);
-	}
-	Destroy();	//자기자신 삭제
+	Execute_OnPickupComplete(this);
+	//// 자신을 먹은 대상에게 자기가 가지고 있는 무기를 알려줘야 함
+	//if (PickupOwner.IsValid() && PickupOwner->Implements<UInventoryOwner>())
+	//{
+	//	IInventoryOwner::Execute_AddItem(PickupOwner.Get(), PickupItem,PickupCount);
+	//}
+	//Destroy();	//자기자신 삭제
 }

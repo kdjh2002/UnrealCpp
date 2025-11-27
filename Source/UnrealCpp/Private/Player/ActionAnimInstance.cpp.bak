@@ -20,7 +20,7 @@ void UActionAnimInstance::NativeInitializeAnimation()
 
 void UActionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
+	//Super::NativeUpdateAnimation(DeltaSeconds);
 
 	//TryGet~ : 블프에서 사용했던거
 	//TryGetPawnOwner()->GetVelocity().Size(); 

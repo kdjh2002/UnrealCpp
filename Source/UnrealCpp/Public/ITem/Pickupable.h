@@ -25,4 +25,7 @@ public:
 	// 아이템을 줏었을 때 처리할 일들을 구현할 함수
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
 	void OnPickup(AActor* Target);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pickup")
+	void OnPickupComplete();
 };
