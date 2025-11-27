@@ -7,7 +7,7 @@
 
 void APickupConsumableMoney::OnConsume()
 {
-	Super::OnConsume();	// APickupConsumable::OnConsume´Â ±¸ÇöÀÌ ¾ø´Ù.
+	Super::OnConsume();	// APickupConsumable::OnConsumeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 	if (PickupOwner.IsValid() && PickupOwner->Implements<UInventoryOwner>())
 	{
