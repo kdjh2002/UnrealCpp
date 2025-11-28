@@ -6,6 +6,7 @@
 #include "Item/Pickup.h"
 #include "PickupItem.generated.h"
 
+//pickupweapon에서 이름만 바꾸는 정도  //add weapon이랑 거의 똑같음
 /**
  * 
  */
@@ -13,5 +14,16 @@ UCLASS()
 class UNREALCPP_API APickupItem : public APickup
 {
 	GENERATED_BODY()
+
+public:
+	virtual void OnPickupComplete_Implementation() override;
+
+protected:
+	// 이 픽업을 먹었을 때 얻을 아이템
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup|Item")
+	EItemCode PickupItem = EItemCode::Figure;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup|Item")
+	int32 ItemCount = 1; //한개가 드롭
 	
 };

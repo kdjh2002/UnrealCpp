@@ -24,6 +24,7 @@ enum class EItemCode : uint8
 	Crown			UMETA(DisplayName = "왕관"),
 	PotionHealth	UMETA(DisplayName = "힐링 포션"),
 	PotionStamina   UMETA(DisplayName = "스테미너 포션"),
+	GoldPouch		UMETA(DisplayName = "돈 주머니"),
 };
 
 UENUM(BlueprintType)
