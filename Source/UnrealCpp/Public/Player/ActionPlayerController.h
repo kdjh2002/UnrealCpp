@@ -25,6 +25,8 @@ class UNREALCPP_API AActionPlayerController : public APlayerController
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
 
 public:
 	virtual void SetupInputComponent() override;
@@ -39,6 +41,7 @@ public:
 private:
 	void OnLookInput(const FInputActionValue& InValue);
 	void OnInventoryOnOff();
+
 protected: 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext = nullptr;
@@ -58,5 +61,7 @@ protected:
 private:
 	int32 GameInputPriority = 1;
 	TWeakObjectPtr<UMainHudWidget> MainHudWidget = nullptr;
+	TWeakObjectPtr<UInventoryWidget> InventoryWidget = nullptr;
+	TWeakObjectPtr<class UInventoryComponent> InventoryComponent = nullptr;
 
 };

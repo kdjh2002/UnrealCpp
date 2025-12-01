@@ -18,6 +18,10 @@ class UNREALCPP_API UInventoryWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	void InitializeInventoryWidget(class UInventoryComponent* InventoryComponent);
+	void RefreshInventoryWidget();
+	void ClearInventoryWidget();
+
 	UPROPERTY(BlueprintAssignable, Category = "UI|Inventory")
 	FOnInventoryCloseRequested OnInventoryCloseRequested;
 
@@ -29,5 +33,13 @@ private:
 protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UButton> CloseButton = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UUniformGridPanel> SlotGridPanel = nullptr;
 	
+private:
+	UPROPERTY()
+	TWeakObjectPtr<UInventoryComponent> TargetInventory = nullptr;
+
+	TArray<TObjectPtr<class UInventorySlotWidget>> SlotWidgets;
 };

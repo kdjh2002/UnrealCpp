@@ -22,17 +22,12 @@ void UMainHudWidget::NativeConstruct()
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
 			StaminaBar->RefreshWidget(resource->GetCurrentStamina(), resource->GetMaxStamina());
 		}
-		if (UInventoryComponent* InventoryComponent = player->GetInventoryComponent())
-		{
-			//Inventory->OnInventoryCloseRequested.AddDynamic(this, &UMainHudWidget::CloseInventory);
-
-			//inventoryComponent의 내용을 바탕으로 InventoryWidget를 채우기
-		}
 	}
 }
 
 void UMainHudWidget::OpenInventory()
 {
+	Inventory->RefreshInventoryWidget();	//열릴떄마다 UI내용 갱신
 	Inventory->SetVisibility(ESlateVisibility::Visible);
 	OpenState = EOpenState::Open;
 }

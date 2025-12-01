@@ -147,7 +147,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
 	TObjectPtr<class UWeaponManagerComponent> WeaponManager = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Inventory")
-	TObjectPtr<class UInventoryComponent> Inventory = nullptr;
+	TObjectPtr<class UInventoryComponent> Inventory = nullptr; //실질적 정보
 
 
 	//IA_인풋 액션들 
