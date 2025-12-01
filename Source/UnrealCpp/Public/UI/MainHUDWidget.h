@@ -6,6 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "MainHudWidget.generated.h"
 
+UENUM(BlueprintType)
+enum class EOpenState : uint8
+{
+	Open	UMETA(DisplayName = "Open"),
+	Close	UMETA(DisplayName = "Close"),
+};
 /**
  * 
  */
@@ -17,13 +23,28 @@ class UNREALCPP_API UMainHudWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
+public:
+	UFUNCTION(BlueprintCallable, Category = "UI|Inventory")
+	void OpenInventory();
+
+	UFUNCTION(BlueprintCallable, Category = "UI|Inventory")
+	void CloseInventory();
+
+	inline EOpenState GetOpenState() const { return OpenState; }
+
 protected:
 	// meta = (BindWidget)
-	// À§Á¬ ºí·çÇÁ¸°Æ®ÀÇ º¯¼ö¿Í ÀÌ Å¬·¡½ºÀÇ º¯¼ö¸¦ ¹ÙÀÎµåÇÏ°Ú´Ù¶ó´Â ÀÇ¹Ì(=µÑÀÌ °°Àº °Å¶ó°í ¼³Á¤)
-	// À§Á¬ ºí·çÇÁ¸°Æ®ÀÇ º¯¼ö¸í°ú ÀÌ Å¬·¡½ºÀÇ º¯¼ö¸íÀÌ ¹Ýµå½Ã °°¾Æ¾ß ÇÑ´Ù.(´ë¼Ò¹®ÀÚµµ °°¾Æ¾ß ÇÑ´Ù)	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½Ï°Ú´Ù¶ï¿½ï¿½ ï¿½Ç¹ï¿½(=ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ýµï¿½ï¿½ ï¿½ï¿½ï¿½Æ¾ï¿½ ï¿½Ñ´ï¿½.(ï¿½ï¿½Ò¹ï¿½ï¿½Úµï¿½ ï¿½ï¿½ï¿½Æ¾ï¿½ ï¿½Ñ´ï¿½)	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TWeakObjectPtr<class UResourceBarWidget> HealthBar;
+	TObjectPtr<class UResourceBarWidget> HealthBar = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	TWeakObjectPtr<class UResourceBarWidget> StaminaBar;
+	TObjectPtr<class UResourceBarWidget> StaminaBar = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory", meta = (BindWidget))
+	TObjectPtr<class UInventoryWidget> Inventory = nullptr;
+
+private:
+	EOpenState OpenState = EOpenState::Close;
 };
