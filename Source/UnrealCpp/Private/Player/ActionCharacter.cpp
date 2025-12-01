@@ -278,9 +278,13 @@ void AActionCharacter::OnMoveInput(const FInputActionValue& InValue)
 
 void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 {
-	if (AnimInstance.IsValid())
+	//if (GetController()->IsMoveInputIgnored()) return;
+
+	if (AnimInstance.IsValid() && !GetController()->IsMoveInputIgnored())
 	{
-			if(!AnimInstance->IsAnyMontagePlaying() //&& CurrentStamina > RollStaminaCost()
+		if (AnimInstance.IsValid())
+		{
+			if (!AnimInstance->IsAnyMontagePlaying() //&& CurrentStamina > RollStaminaCost()
 				&& Resource->HasEnoughStamina(RollStaminaCost))	// 몽타주 재생중이 아니고 충분한 스태미너가 있을 때만 작동
 			{
 				//if (!GetLastMovementInputVector().IsNearlyZero()) //입력을 하는 중에만 즉시 회전
@@ -291,14 +295,17 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 				//StaminaRegenTimerSet();
 				Resource->AddStamina(-RollStaminaCost);// -= 10.0f; //매 프레임마다 1만큼 깎이기
 				PlayAnimMontage(RollMontage);
-			//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
+				//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
 
 			}
 		}
+	}
 }
 
 void AActionCharacter::OnAttackInput(const FInputActionValue& InValue)
 {
+	if (GetController()->IsMoveInputIgnored()) return;
+
 	// 애님 인스턴스가 있고, 스태미너도 충분하고, 현재 무기가 공격을 할 수 있어야 한다.
 	if (AnimInstance.IsValid() && Resource->HasEnoughStamina(AttackStaminaCost)
 		&& (CurrentWeapon.IsValid() && CurrentWeapon->CanAttack()))

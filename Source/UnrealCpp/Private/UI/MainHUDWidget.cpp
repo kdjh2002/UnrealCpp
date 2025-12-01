@@ -5,7 +5,6 @@
 #include "Player/ActionCharacter.h"
 #include "Player/ResourceComponent.h"
 #include "UI/ResourceBarWidget.h"
-#include "UI/Inventory/InventoryWidget.h"
 
 void UMainHudWidget::NativeConstruct()
 {
@@ -25,7 +24,7 @@ void UMainHudWidget::NativeConstruct()
 		}
 		if (UInventoryComponent* InventoryComponent = player->GetInventoryComponent())
 		{
-			Inventory->OnInventoryCloseRequested.AddDynamic(this, &UMainHudWidget::CloseInventory);
+			//Inventory->OnInventoryCloseRequested.AddDynamic(this, &UMainHudWidget::CloseInventory);
 
 			//inventoryComponent의 내용을 바탕으로 InventoryWidget를 채우기
 		}
@@ -35,10 +34,12 @@ void UMainHudWidget::NativeConstruct()
 void UMainHudWidget::OpenInventory()
 {
 	Inventory->SetVisibility(ESlateVisibility::Visible);
+	OpenState = EOpenState::Open;
 }
 
 void UMainHudWidget::CloseInventory()
 {
+	OpenState = EOpenState::Close;
 	Inventory->SetVisibility(ESlateVisibility::Hidden);
 
 }

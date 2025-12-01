@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
 #include "InputMappingContext.h"
+#include "Framework/MainHUD.h"
 
 void AActionPlayerController::BeginPlay()
 {
@@ -29,6 +30,7 @@ void AActionPlayerController::SetupInputComponent()
 	{
 		//UE_LOG(LogTemp, Log, TEXT("바인드 성공"));
 		enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AActionPlayerController::OnLookInput);
+		enhanced->BindAction(IA_InventoryOnOff, ETriggerEvent::Started, this, &AActionPlayerController::OnInventoryOnOff);
 		//enhanced->BindAction(IA_Look, ETriggerEvent::Triggered, "OnLookInput");
 	}
 }
@@ -39,4 +41,66 @@ void AActionPlayerController::OnLookInput(const FInputActionValue& InValue)
 	//UE_LOG(LogTemp, Log, TEXT("OnLookInput : %s"), *lookAxis.ToString());
 	AddYawInput(lookAxis.X);
 	AddPitchInput(lookAxis.Y);
+}
+
+void AActionPlayerController::OnInventoryOnOff()
+{
+	if (MainHudWidget.IsValid())
+	{
+		if (MainHudWidget->GetOpenState() == EOpenState::Open)
+		{
+			CloseInventoryWidget();
+		}
+		else
+		{
+			OpenInventoryWidget(); 
+		}
+	}
+}
+
+void AActionPlayerController::OpenInventoryWidget()
+{
+	if (MainHudWidget.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("OpenInventoryWidget"))
+		MainHudWidget->OpenInventory();
+		
+		/*FInputModeGameOnly; : 게임 전용(입력이 플레이어 컨트롤러로 우선 전달됨, 마우스 커서가 안보임)
+		FInputModeUIOnly;	  : UI가 떠 있을 떄 사용(입력이 UI로 먼저 전달됨, 마우스 커서가 보임)
+		FInputModeGameAndUI;  : 마우스를 클릭했을 떄 UI가 아래에 있으면 UI로 처리, 없으면 Game으로 처리 */ 
+		
+		FInputModeGameAndUI inputMode;
+		inputMode.SetWidgetToFocus(MainHudWidget->TakeWidget());	//위젯에 포커스 추가
+		inputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);	//마우스 커서가 뷰포트를 벗어날 수 있게 설정
+		inputMode.SetHideCursorDuringCapture(false);	//마우스가 눌러졌을 떄도 커서가 보이도록 설정
+		SetInputMode(inputMode);	//InputMode를 플레이어 컨트롤러에 적용
+
+		bShowMouseCursor = true;
+
+		SetIgnoreMoveInput(true);	//이동입력 무시
+		SetIgnoreLookInput(true);	//카메라 회전 입력을 무시
+
+		SetPause(true);		//게임일시정지
+	}
+}
+
+void AActionPlayerController::CloseInventoryWidget()
+{
+	if (MainHudWidget.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("CloseInventoryWidget"));
+
+		SetPause(false);	//게임일시정지 해제
+
+		SetIgnoreMoveInput(false);	//이동입력 다시받기
+		SetIgnoreLookInput(false);	//카메라 회전 입력	다시받기
+
+		FInputModeGameOnly inputMode;	
+		SetInputMode(inputMode);
+
+		bShowMouseCursor = false;
+
+		MainHudWidget->CloseInventory();
+
+	}
 }
