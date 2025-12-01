@@ -22,6 +22,7 @@ public:
 	FOnInventoryCloseRequested OnInventoryCloseRequested;
 
 private:
+	//버튼연결함수
 	UFUNCTION()
 	void OnCloseClicked();
 

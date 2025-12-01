@@ -29,11 +29,12 @@ protected:
 public:
 	virtual void SetupInputComponent() override;
 	
+	//인벤토리창 이용 함수
 	void OpenInventoryWidget();
 	UFUNCTION()
 	void CloseInventoryWidget();
 
-	inline void SetMainHudWidget(UMainHudWidget* Widget) { MainHudWidget = Widget; }
+	inline void InitializeMainHudwidget(UMainHudWidget* InWidget);
 
 private:
 	void OnLookInput(const FInputActionValue& InValue);
@@ -45,6 +46,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction>IA_Look = nullptr;
 
+	//인벤토리 온오프
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction>IA_InventoryOnOff = nullptr;
 

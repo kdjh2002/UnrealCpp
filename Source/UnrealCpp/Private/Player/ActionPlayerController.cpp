@@ -104,3 +104,13 @@ void AActionPlayerController::CloseInventoryWidget()
 
 	}
 }
+
+inline void AActionPlayerController::InitializeMainHudwidget(UMainHudWidget* InWidget)
+{
+	MainHudWidget = InWidget;
+
+	//MainHudWidget의 Inventory의 닫힘 델리게이트에 함수 연결
+	FScriptDelegate delegate;
+	delegate.BindUFunction(this, "CloseInventoryWidget");
+	MainHudWidget->AddToInventoryCloseDelegate(delegate);
+}

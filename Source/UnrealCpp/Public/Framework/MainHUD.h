@@ -25,6 +25,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UUserWidget> MainWidgetClass = nullptr;
 
+	//인벤토리
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UMainHudWidget> MainWidgetInstance = nullptr;
 
