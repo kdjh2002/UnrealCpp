@@ -4,6 +4,7 @@
 #include "UI/Inventory/InventoryWidget.h"
 #include "UI/Inventory/InventorySlotWidget.h"
 #include "UI/Inventory/GoldPanelWidget.h"
+#include "UI/Inventory/InventoryDragDropOperation.h"
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
 #include "Player/InventoryComponent.h"
@@ -79,7 +80,18 @@ void UInventoryWidget::ClearInventoryWidget()
 	TargetInventory = nullptr;
 }
 
+bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
+	if (invenOp)
+	{
+		UE_LOG(LogTemp, Log, TEXT("인벤토리에 드랍 : 원래 슬롯(%d)으로 아이템이 돌아가야 한다."), invenOp->Index);
+		return true;
+	}
+	return false;
+}
+
 void UInventoryWidget::OnCloseClicked()
 {
-	OnInventoryCloseRequested.Broadcast();	//닫힘버튼이 눌려졌음을 알리기만 함
+	OnInventoryCloseRequested.Broadcast();	// 닫힘 버튼이 눌려졌음을 알리기만 함
 }

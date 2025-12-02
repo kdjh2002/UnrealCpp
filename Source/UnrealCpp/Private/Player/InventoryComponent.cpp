@@ -35,48 +35,47 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 	//	2.4 추가하고 남은 아이템이 없으면 return 0; 하고 종료
 	//3. 남아있는 InCount를 리턴하고 종료.
 
-
-	if (!InItemData && InCount > 0)	//추가가 가능할 때만 추가
+	int32 remainingCount = InCount;
+	if (InItemData && InCount > 0)	// 추가가 가능할 때만 추가
 	{
-		int32 remainingCount = InCount;
+		// 같은 종류의 아이템이 들어있는 슬롯을 찾아 추가하기
 		int32 startIndex = 0;
-
-		while (remainingCount > 0)
+		while (remainingCount > 0)	// remainingCount가 남아있는한 반복(같은 종류의 아이템이 있는 슬롯이 없으면 break)
 		{
-			//같은 종류의 아이템이 들어있고 중간에 여유가 있는 슬롯 찾기 시도
-			int32 foundIndex = FindSlotWithItem(InItemData, startIndex);
-			//true면 적절한 슬롯을 찾았다.
-			if (foundIndex != UInventoryComponent::InventoryFail)
+			int32 foundIndex = FindSlotWithItem(InItemData, startIndex);	// 같은 종류의 아이템이 들어있고 공간에 여유가 있는 슬롯 찾기 시도
+			if (foundIndex == UInventoryComponent::InventoryFail)
+				break;	// 같은 종류의 아이템이 들어있는 슬롯이 없으면 "while (remainingCount > 0)"를 break;
+
+			// 같은 종류의 아이템이 들어있는 슬롯을 찾았다.
+			FInvenSlot& slot = Slots[foundIndex];
+			int32 availableCount = slot.ItemData->ItemMaxStackCount - slot.GetCount();	// 슬롯에 추가 가능한 갯수가 몇개인지 확인
+			if (availableCount > 0)	// 추가가 가능하면
 			{
-				FInvenSlot& slot = Slots[foundIndex];
-				int32 availableCount = slot.ItemData->ItemMaxStackCount - slot.GetCount();
-				//추가가능한 갯수가 몇개인 지 확인
-				if (availableCount > 0)	//추가가 가능하면
-				{
-					int32 amountToAdd = FMath::Min(availableCount, remainingCount);	//추가량 결정
-					SetItemAtIndex(foundIndex, InItemData, slot.GetCount() + amountToAdd);	//결정된 추가량만큼 추가
-					remainingCount -= amountToAdd;	//remainingCount을 슬롯에 추가한 만큼 감소
-				}
-			}
-			else
-			{
-				break;
+				int32 amountToAdd = FMath::Min(availableCount, remainingCount);			// 추가량 결정
+				SetItemAtIndex(foundIndex, InItemData, slot.GetCount() + amountToAdd);	// 결정된 추가량만큼 추가
+				remainingCount -= amountToAdd;	// remainingCount을 슬롯에 추가한만큼 감소
 			}
 
-			startIndex = foundIndex + 1;	//FindSlotWithItem에서 현재 슬롯 다음부터 찾게하기
+			startIndex = foundIndex + 1;	// FindSlotWithItem에서 현재 슬롯 다음부터 찾게 하기
 		}
-		//같은 종류의 아이템이 들어있는 슬롯이 없으니 빈칸에 추가하기
-		while (remainingCount > 0)	//remainingCount가 남아있는한 반복
+
+		// 같은 종류의 아이템이 들어있는 슬롯이 없으니 빈칸에 추가하기
+		while (remainingCount > 0)	// remainingCount가 남아있는한 반복(빈슬롯이 없으면 break)
 		{
 			int32 emptyIndex = FindEmptySlot();
 			if (emptyIndex == UInventoryComponent::InventoryFail)
-				break;	//빈슬롯이 없다.
+				break;	// 빈슬롯이 없다.
 
-			int32 amountToAdd = FMath::Min(InItemData->ItemMaxStackCount, remainingCount);
+			int32 amountToAdd = FMath::Min(InItemData->ItemMaxStackCount, remainingCount);	// 추가량 결정
+			SetItemAtIndex(emptyIndex, InItemData, amountToAdd);							// 결정된 추가량만큼 추가
+			remainingCount -= amountToAdd;	// remainingCount을 슬롯에 추가한만큼 감소
 		}
+
+		// 같은 종류의 아이템이 들어있는 슬롯과 빈슬롯을 모두 채우고도 남은 아이템이 있다. => 남아있는 remainingCount 리턴
 	}
-	return 0;
+	return remainingCount;
 }
+
 
 void UInventoryComponent::UseItem(int32 InUseIndex)
 {
@@ -85,6 +84,7 @@ void UInventoryComponent::UseItem(int32 InUseIndex)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Inven %d Slot : 사용됨"), InUseIndex);
 		IUsableItem::Execute_UseItem(slot->ItemData, GetOwner());	//이 컴포넌트를 가지고 있는 액터에게 아이템을 사용해라
+		
 		UpdateSlotCount(InUseIndex, -1);
 
 	}
@@ -146,13 +146,13 @@ FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)
 
 }
 
-int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex)
+int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex) 
 {
 	int32 result = UInventoryComponent::InventoryFail;	//-1은 실패했음을 알리는 값
 	int32 size = Slots.Num();
 	for (int32 i = InStartIndex; i < size; i++)
 	{
-		if (Slots[i].ItemData == InItemData && Slots[i].IsFull())
+		if (Slots[i].ItemData == InItemData && !Slots[i].IsFull()) 	// 같은 데이터에셋을 가지고 있으면서 빈칸이 있는 경우
 		{
 			result = i;
 			break;
