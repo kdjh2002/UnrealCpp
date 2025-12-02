@@ -131,7 +131,7 @@ void AActionPlayerController::CloseInventoryWidget()
 	}
 }
 
-inline void AActionPlayerController::InitializeMainHudwidget(UMainHudWidget* InWidget)
+void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InWidget)
 {
 	if (InWidget)
 	{
@@ -147,5 +147,15 @@ inline void AActionPlayerController::InitializeMainHudwidget(UMainHudWidget* InW
 		{
 			InventoryWidget->InitializeInventoryWidget(InventoryComponent.Get());
 		}
+	}
+}
+
+
+//
+void AActionPlayerController::TestChangeInventoryTarget(UInventoryComponent* NewTarget)
+{
+	if (NewTarget)
+	{
+		InventoryWidget->InitializeInventoryWidget(NewTarget);
 	}
 }

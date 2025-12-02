@@ -36,7 +36,9 @@ public:
 	UFUNCTION()
 	void CloseInventoryWidget();
 
-	inline void InitializeMainHudwidget(UMainHudWidget* InWidget);
+	void InitializeMainHudWidget(UMainHudWidget* InWidget);
+
+	void TestChangeInventoryTarget(UInventoryComponent* NewTarget);
 
 private:
 	void OnLookInput(const FInputActionValue& InValue);

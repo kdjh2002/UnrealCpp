@@ -13,9 +13,9 @@ void UMainHudWidget::NativeConstruct()
 	AActionCharacter* player = Cast<AActionCharacter>(GetOwningPlayerPawn());
 	if (player)
 	{
-		if (player && player->GetResourceComponent())
+		if (UResourceComponent* resource = player->GetResourceComponent())
 		{
-			UResourceComponent* resource = player->GetResourceComponent();
+	
 			resource->OnHealthChanged.AddUObject(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
 			resource->OnStaminaChanged.AddDynamic(StaminaBar.Get(), &UResourceBarWidget::RefreshWidget);
 

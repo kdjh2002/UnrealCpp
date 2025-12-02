@@ -20,7 +20,7 @@ void AMainHUD::BeginPlay()
 			AActionPlayerController* pc = Cast<AActionPlayerController>(GetOwningPlayerController());
 			if (pc)
 			{
-				pc->InitializeMainHudwidget(MainWidgetInstance);
+				pc->InitializeMainHudWidget(MainWidgetInstance);
 			}
 		}
 	}

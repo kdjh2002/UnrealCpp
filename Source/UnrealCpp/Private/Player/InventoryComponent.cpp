@@ -2,6 +2,7 @@
 
 
 #include "Player/InventoryComponent.h"
+#include "Data/Usable/UsableItem.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -12,6 +13,13 @@ UInventoryComponent::UInventoryComponent()
 
 	// ...
 	Slots.SetNum(InventorySize);	//인벤토리 크기만큼 빈 슬롯 만들기
+}
+
+
+void UInventoryComponent::AddMoney(int32 InIncome)
+{
+	Money += InIncome;
+	OnInventoryMoneyChanged.ExecuteIfBound(Money); 
 }
 
 int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
@@ -70,6 +78,22 @@ int32 UInventoryComponent::AddItem(UItemDataAsset* InItemData, int32 InCount)
 	return 0;
 }
 
+void UInventoryComponent::UseItem(int32 InUseIndex)
+{
+	FInvenSlot* slot = GetSlotData(InUseIndex);
+	if (slot->ItemData && slot->ItemData->Implements<UUsableItem>())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Inven %d Slot : 사용됨"), InUseIndex);
+		IUsableItem::Execute_UseItem(slot->ItemData, GetOwner());	//이 컴포넌트를 가지고 있는 액터에게 아이템을 사용해라
+		UpdateSlotCount(InUseIndex, -1);
+
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Inven %d Slot : 비어있거나 사용할 수 없는 아이템"), InUseIndex);
+	}
+}
+
 void UInventoryComponent::SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount)
 {
 	if (IsValidIndex(InSlotIndex))
@@ -78,6 +102,8 @@ void UInventoryComponent::SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InIt
 
 			TargetSlot.ItemData = InItemData;	//다시 널로 세팅
 			TargetSlot.SetCount(InCount);	//Incount가 0이하면 자동 Clear
+
+			OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
 	}
 
 }
@@ -97,15 +123,14 @@ void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
 void UInventoryComponent::ClearSlotAtIndex(int32 InSlotIndex)
 {
 
-	if (IsValidIndex(InSlotIndex))
-	{
-
-		FInvenSlot& TargetSlot = Slots[InSlotIndex]; //다시 널로 세팅
-		TargetSlot.Clear();	//Incount가 0이하면 자동 Clear
-	}
-
-
-
+	//if (IsValidIndex(InSlotIndex))
+	//{
+		//FInvenSlot& TargetSlot = Slots[InSlotIndex]; //다시 널로 세팅
+		//TargetSlot.Clear();	//Incount가 0이하면 자동 Clear
+		//OnInventorySlotChanged.ExcuteIfBound(InSlotIndex);
+	//}
+	
+	SetItemAtIndex(InSlotIndex, nullptr, 0);
 }
 
 FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)

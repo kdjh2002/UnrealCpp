@@ -166,6 +166,8 @@ void AActionCharacter::AddWeapon_Implementation(EWeaponCode Code, int32 UseCount
 void AActionCharacter::AddMoney_Implementation(int32 Income)
 {
 	UE_LOG(LogTemp, Log, TEXT("돈 (%d) 골드를 획득했습니다."), Income);
+
+	Inventory->AddMoney(Income);
 }
 
 void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
@@ -188,6 +190,15 @@ void AActionCharacter::DamageHealth_Implementation(float InDamage)
 	{
 		Resource->AddHealth(-InDamage);
 	}
+}
+
+void AActionCharacter::RecoveryStamina_Implementation(float InRecovery)
+{
+	if (Resource)
+	{
+		Resource->AddStamina(InRecovery);
+	}
+
 }
 
 void AActionCharacter::EquipWeapon(EWeaponCode WeaponCode)
@@ -282,8 +293,6 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 
 	if (AnimInstance.IsValid() && !GetController()->IsMoveInputIgnored())
 	{
-		if (AnimInstance.IsValid())
-		{
 			if (!AnimInstance->IsAnyMontagePlaying() //&& CurrentStamina > RollStaminaCost()
 				&& Resource->HasEnoughStamina(RollStaminaCost))	// 몽타주 재생중이 아니고 충분한 스태미너가 있을 때만 작동
 			{
@@ -298,7 +307,6 @@ void AActionCharacter::OnRollInput(const FInputActionValue& InValue)
 				//	UE_LOG(LogTemp, Warning, TEXT("CurrentStamina : %.1f"), CurrentStamina);
 
 			}
-		}
 	}
 }
 

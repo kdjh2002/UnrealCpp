@@ -8,6 +8,7 @@
 #include "AnimNotify/AnimNotifyState_SectionJump.h"
 #include "Player/InventoryOwner.h"
 #include "Player/HasHealth.h"
+#include "Player/HasStamina.h"
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지막
 
 
@@ -18,7 +19,7 @@ class UStatusComponent;
 class UInventoryComponent;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth, public IHasStamina
 {
 	GENERATED_BODY()
 
@@ -46,6 +47,11 @@ public:
 	//IHasHealth 
 	virtual void HealHealth_Implementation(float InHeal) override;
 	virtual void DamageHealth_Implementation(float InDamage) override;
+
+	//IHasStamina인터페이스 함수 구현
+	virtual void RecoveryStamina_Implementation(float InRecovery) override;
+
+
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void EquipWeapon(EWeaponCode WeaponCode);

@@ -48,7 +48,7 @@ void UPickupFactorySubsystem::LoadPickupClassesMap()
 				}
 				PickupClasses.Add(row->PickupCode, row->PickupClass);
 			}
-			UE_LOG(LogTemp, Log, TEXT("UPickupFactorySubsystem : 키 없이 중복입니다. 이전 값은 덮어써집니다."));
+			UE_LOG(LogTemp, Log, TEXT("UPickupFactorySubsystem : DataTable 로딩 완료."));
 		}
 		else
 		{
