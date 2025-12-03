@@ -17,6 +17,7 @@ void UMainHudWidget::NativeConstruct()
 		{
 	
 			resource->OnHealthChanged.AddUObject(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
+			//resource->OnHealthChanged.AddDynamic(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
 			resource->OnStaminaChanged.AddDynamic(StaminaBar.Get(), &UResourceBarWidget::RefreshWidget);
 
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());

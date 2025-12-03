@@ -153,4 +153,3 @@ void UResourceComponent::StaminaRegenPerTick()
 	//UE_LOG(LogTemp, Warning, TEXT("Stamina Regen : %.1f"), CurrentStamina);
 
 }
-

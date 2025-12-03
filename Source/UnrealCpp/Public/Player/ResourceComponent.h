@@ -32,6 +32,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStaminaEmpty);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);		//사망 알림용
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, Current, float, Max);	// 스태미너 변경 알림용
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, Current, float, Max);	// 스태미너 변경 알림용
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, float);	// 체력 변경 알림용(비교를 위해 일반 델리게이트로 만듬)
 
 
@@ -135,15 +136,15 @@ protected:
 	float MaxHealth = 100.0f;
 
 	//현재 스테미너(값을 설정할 때 SetCurrentStamina로 설정할 것)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data | Stamina")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data|Stamina")
 	float CurrentStamina = 100.0f;
 
 	//최대 스테미너
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data | Stamina")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data|Stamina")
 	float MaxStamina = 100.0f;
 
 	//스테미너가 자동 회복되는데 걸리는 시간
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data | Stamina")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")
 	float StaminaRegenCoolTime = 3.0f;
 
 	////스테미너가 자동 회복양(초당)
@@ -151,11 +152,11 @@ protected:
 	//float StaminaRegenAmount = 50.0f;
 
 	//스테미너 틱 간격
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data | Stamina")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")
 	float StaminaTickInterval = 0.1f;
 
 	//스테미너가 자동 회복양(틱당)
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data | Stamina")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data|Stamina")
 	float StaminaRegenAmountPerTick = 10.0f;
 
 	////스테미너 자동 회복양(틱당, 최대치의 %)

@@ -22,20 +22,20 @@ public:
 
 	//헬퍼
 	//이 슬롯이 비어있는지 확인하는 함수
-	bool IsEmpty() const { return ItemData == nullptr || Count < 1;}
+	inline bool IsEmpty() const { return ItemData == nullptr || Count < 1;}
 	//이 슬롯이 가득차있는지 확인하는 함수
-	bool IsFull() const { return ItemData && Count >= ItemData->ItemMaxStackCount;}
+	inline bool IsFull() const { return ItemData && Count >= ItemData->ItemMaxStackCount;}
 	//슬롯을 비우는 함수
-	void Clear()
+	inline void Clear()
 	{
 		ItemData = nullptr;
 		Count = 0;
 	}
 
 	//getter/setter
-	int32 GetCount() const { return Count; }
-	void SetCount(int32 NewCount)
-	{
+	inline int32 GetRemainingCount() const { return ItemData ? ItemData->ItemMaxStackCount - Count : 0; }
+	inline int32 GetCount() const { return Count; }
+	inline void SetCount(int32 NewCount) {
 		if (ItemData && NewCount > 0)
 		{
 			Count = FMath::Min(NewCount, ItemData->ItemMaxStackCount); // NewCount는 0~ItemMaxStackCount 범위의 값

@@ -9,30 +9,29 @@
 #include "Components/UniformGridPanel.h"
 #include "Player/InventoryComponent.h"
 
+
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	if (CloseButton)
 	{
-		//CloseButton
 		CloseButton->OnClicked.AddDynamic(this, &UInventoryWidget::OnCloseClicked);
 	}
 }
-
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
 {
 	if (InventoryComponent && SlotGridPanel)
 	{
-		TargetInventory = InventoryComponent;	//인벤토리 컴포넌트 저장
+		TargetInventory = InventoryComponent;	// 인벤토리 컴포넌트 저장
 		if (TargetInventory.IsValid())
 		{
 			UE_LOG(LogTemp, Log, TEXT("인벤토리 위젯 초기화"));
 
 			if (SlotGridPanel->GetChildrenCount() != TargetInventory->GetInventorySize())
 			{
-				UE_LOG(LogTemp, Error, TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다."));
+				UE_LOG(LogTemp, Error, TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다!!!"));
 				return;
 			}
 
@@ -54,6 +53,7 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryC
 		}
 	}
 }
+
 void UInventoryWidget::RefreshInventoryWidget()
 {
 	for (const UInventorySlotWidget* slot : SlotWidgets)
@@ -61,17 +61,20 @@ void UInventoryWidget::RefreshInventoryWidget()
 		slot->RefreshSlot();
 	}
 }
+
 void UInventoryWidget::RefreshMoneyPanel(int32 CurrentMoney)
 {
 	GoldPanel->SetGold(CurrentMoney);
 }
+
 void UInventoryWidget::RefreshSlotWidget(int32 InSlotIndex)
 {
-	if(IsValidIndex(InSlotIndex))
+	if (IsValidIndex(InSlotIndex))
 	{
-	SlotWidgets[InSlotIndex]->RefreshSlot();
+		SlotWidgets[InSlotIndex]->RefreshSlot();
 	}
 }
+
 void UInventoryWidget::ClearInventoryWidget()
 {
 	TargetInventory = nullptr;
@@ -82,7 +85,8 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 	UInventoryDragDropOperation* invenOp = Cast<UInventoryDragDropOperation>(InOperation);
 	if (invenOp)
 	{
-		UE_LOG(LogTemp, Log, TEXT("인벤토리에 드랍 : 원래 슬롯(%d)으로 아이템이 돌아가야 한다."), invenOp->Index);
+		//UE_LOG(LogTemp, Log, TEXT("인벤토리에 드랍 : 원래 슬롯(%d)으로 아이템이 돌아가야 한다."), invenOp->StartIndex);
+		TargetInventory->SetItemAtIndex(invenOp->StartIndex, invenOp->ItemData.Get(), invenOp->Count);
 		return true;
 	}
 	return false;
