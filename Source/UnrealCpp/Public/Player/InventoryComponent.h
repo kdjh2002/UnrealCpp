@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/ItemDataAsset.h"
+#include "UI/Inventory/TemporarySlotWidget.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -37,7 +38,7 @@ public:
 	{
 		if (ItemData && NewCount > 0)
 		{
-			Count = FMath::Min(NewCount, ItemData->ItemMaxStackCount);
+			Count = FMath::Min(NewCount, ItemData->ItemMaxStackCount); // NewCount는 0~ItemMaxStackCount 범위의 값
 		}
 		else
 		{
@@ -53,7 +54,7 @@ protected:
 };
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventorySlotChanged, int32, InIndex);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrrentMoney);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrentMoney);
 
 //여러개의 아이템 슬롯을 가진다.
 //하나의 슬롯에는 한종류의 아이템만 들어간다.
@@ -98,6 +99,11 @@ public:
 	//특정칸을 비우는 함수(InSlotIndex : 비울 슬롯)
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void ClearSlotAtIndex(int32 InSlotIndex);
+
+	// 아이템을 특정칸에 추가하는 함수(초기화, 로딩 등에 사용)
+	// InSlotIndex: 아이템이 추가될 슬롯, InItemData: 추가되는 아이템의 종류, InCount: 추가되는 아이템의 갯수	
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
 	
 	// 특정 슬롯을 확인하기 위한 함수. 읽기 전용. (InSlotIndex: 확인할 슬롯)	
 	FInvenSlot* GetSlotData(int32 InSlotIndex);
@@ -110,10 +116,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	inline int32 GetInventorySize() const { return InventorySize; }
 
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	inline TSubclassOf<UTemporarySlotWidget> GetTemporarySlotWidgetClass() const { return TemporarySlotWidgetClass; }
+
 protected:
 	//여러개 슬롯임으로 갯수 확인함수
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory")
 	int32 InventorySize = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TSubclassOf<UTemporarySlotWidget> TemporarySlotWidgetClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Inventory|Money")
 	int32 Money = 0;
@@ -124,11 +136,6 @@ protected:
 
 
 private:
-
-	//아이템을 특정칸에 추가하는 함수(초기화, 로딩 등에 사용)
-	//InSlotIndex : 아이템이 추가될 슬롯, InItemData : 추가되는 아이템의 종류, InCount : 추가되는 아이템의 갯수
-	void SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InItemData, int32 InCount);
-
 
 	//같은 종류의 아이템이 있는 슬롯을 찾는 함수
 	//InItemData : 비교할 아이템의 종류, InstartIndex : 찾기 시작할 인덱스

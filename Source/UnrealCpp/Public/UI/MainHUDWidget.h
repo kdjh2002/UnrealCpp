@@ -44,9 +44,8 @@ public:
 
 protected:
 	// meta = (BindWidget)
-	// ���� �������Ʈ�� ������ �� Ŭ������ ������ ���ε��ϰڴٶ�� �ǹ�(=���� ���� �Ŷ�� ����)
-	// ���� �������Ʈ�� ������� �� Ŭ������ �������� �ݵ�� ���ƾ� �Ѵ�.(��ҹ��ڵ� ���ƾ� �Ѵ�)	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
+// 위젯 블루프린트의 변수와 이 클래스의 변수를 바인드하겠다라는 의미(=둘이 같은 거라고 설정)
+	// 위젯 블루프린트의 변수명과 이 클래스의 변수명이 반드시 같아야 한다.(대소문자도 같아야 한다)	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))
 	TObjectPtr<class UResourceBarWidget> HealthBar = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Resource", meta = (BindWidget))

@@ -156,11 +156,11 @@ void AEnemyPawn::DropItems(float BonusChange)
 	if (DropItemTable)
 	{
 
-		APickup* pickup = nullptr;
-		TMap<FName, uint8*> RowMap = DropItemTable -> GetRowMap();
 		//TArray<FDropItemData_TableRow*> AllRows;
 		//DropItemTable->GetAllRows<FDropItemData_TableRow>(TEXT("Rows"), AllRows);
 
+		APickup* pickup = nullptr;
+		TMap<FName, uint8*> RowMap = DropItemTable -> GetRowMap();
 		
 		//중복으로 당첨 가능
 		for (const auto& element : RowMap)
@@ -233,29 +233,29 @@ void AEnemyPawn::DropItems(float BonusChange)
 		//데이터 테이블에 (0.1 한개, 0.2 한개 0.3 한개) -> (0.1, 0.3, 0.6)
 		
 		//전체 가중치 사용하는 방식(한개만 뽑는것)
-		float totalWeight = 0.0f;
-		for (const auto& element : RowMap)
-		{
-			FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
-			totalWeight += row->DropRate;
-			//넘어갈때마다 배열로 처리해도 굿~
-		}
-		float randomSelect = FMath::FRandRange(0, totalWeight);
-		float currentWeight = 0.0f;
-		for (const auto& element : RowMap)
-		{
-			FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
-			currentWeight += row->DropRate;
-			if (randomSelect < currentWeight)
-			{
-				//당첨 -> 스폰처리
-				GetWorld()->SpawnActor<APickup>(
-					row->DropItemClass,
-					GetActorLocation() + FVector::UpVector * 200.0f,
-					GetActorRotation());
-				break;
-			}
-		}
+		//float totalWeight = 0.0f;
+		//for (const auto& element : RowMap)
+		//{
+		//	FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
+		//	totalWeight += row->DropRate;
+		//	//넘어갈때마다 배열로 처리해도 굿~
+		//}
+		//float randomSelect = FMath::FRandRange(0, totalWeight);
+		//float currentWeight = 0.0f;
+		//for (const auto& element : RowMap)
+		//{
+		//	FDropItemData_v1_TableRow* row = (FDropItemData_v1_TableRow*)element.Value;
+		//	currentWeight += row->DropRate;
+		//	if (randomSelect < currentWeight)
+		//	{
+		//		//당첨 -> 스폰처리
+		//		GetWorld()->SpawnActor<APickup>(
+		//			row->DropItemClass,
+		//			GetActorLocation() + FVector::UpVector * 200.0f,
+		//			GetActorRotation());
+		//		break;
+		//	}
+		//}
 	}
 }
 

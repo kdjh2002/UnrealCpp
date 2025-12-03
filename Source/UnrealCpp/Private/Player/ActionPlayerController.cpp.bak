@@ -106,7 +106,7 @@ void AActionPlayerController::OpenInventoryWidget()
 		SetIgnoreMoveInput(true);	//이동입력 무시
 		SetIgnoreLookInput(true);	//카메라 회전 입력을 무시
 
-		SetPause(true);		//게임일시정지
+		//SetPause(true);		//게임일시정지
 	}
 }
 
@@ -131,7 +131,7 @@ void AActionPlayerController::CloseInventoryWidget()
 	}
 }
 
-inline void AActionPlayerController::InitializeMainHudwidget(UMainHudWidget* InWidget)
+void AActionPlayerController::InitializeMainHudWidget(UMainHudWidget* InWidget)
 {
 	if (InWidget)
 	{
@@ -149,6 +149,7 @@ inline void AActionPlayerController::InitializeMainHudwidget(UMainHudWidget* InW
 		}
 	}
 }
+
 
 //
 void AActionPlayerController::TestChangeInventoryTarget(UInventoryComponent* NewTarget)

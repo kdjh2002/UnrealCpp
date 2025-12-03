@@ -36,7 +36,7 @@ public:
 	UFUNCTION()
 	void CloseInventoryWidget();
 
-	void InitializeMainHudwidget(UMainHudWidget* InWidget);
+	void InitializeMainHudWidget(UMainHudWidget* InWidget);
 
 	void TestChangeInventoryTarget(UInventoryComponent* NewTarget);
 

@@ -19,7 +19,7 @@ public:
 	int32 MinGold = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemData|GoldPouch", meta = (ClampMin = "0"))
-	int32 MaxGold = 1000.0f;
+	int32 MaxGold = 1000;
 
 public:
 	virtual void UseItem_Implementation(AActor* InTarget) override;

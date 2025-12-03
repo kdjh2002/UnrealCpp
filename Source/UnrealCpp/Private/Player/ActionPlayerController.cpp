@@ -106,7 +106,7 @@ void AActionPlayerController::OpenInventoryWidget()
 		SetIgnoreMoveInput(true);	//이동입력 무시
 		SetIgnoreLookInput(true);	//카메라 회전 입력을 무시
 
-		SetPause(true);		//게임일시정지
+		//SetPause(true);		//게임일시정지
 	}
 }
 
@@ -116,7 +116,7 @@ void AActionPlayerController::CloseInventoryWidget()
 	{
 		UE_LOG(LogTemp, Log, TEXT("CloseInventoryWidget"));
 
-		SetPause(false);	//게임일시정지 해제
+		//SetPause(false);	//게임일시정지 해제
 
 		SetIgnoreMoveInput(false);	//이동입력 다시받기
 		SetIgnoreLookInput(false);	//카메라 회전 입력	다시받기

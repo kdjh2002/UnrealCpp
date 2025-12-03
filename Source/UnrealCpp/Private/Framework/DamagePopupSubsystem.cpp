@@ -51,6 +51,7 @@ void UDamagePopupSubsystem::ShowDamagePopup(float Damage, const FVector& Locatio
 
 void UDamagePopupSubsystem::ReturnToPool(ADamagePopupActor* ReturnActor)
 {
+	UE_LOG(LogTemp, Log, TEXT("ReturnToPool"));
 	if (IsValid(ReturnActor))
 	{
 		//ReturnActor->SetActorHiddenInGame(true);
