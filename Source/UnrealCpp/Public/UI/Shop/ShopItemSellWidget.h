@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ShopItemSellWidget.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemSell);
 /**
  * 
  */
@@ -13,6 +14,9 @@ UCLASS()
 class UNREALCPP_API UShopItemSellWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	FOnItemSell OnItemSell;
 
 protected:
 	// 드래그 완료

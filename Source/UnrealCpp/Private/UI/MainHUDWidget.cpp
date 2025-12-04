@@ -5,6 +5,7 @@
 #include "Player/ActionCharacter.h"
 #include "Player/ResourceComponent.h"
 #include "UI/ResourceBarWidget.h"
+#include "UI/Shop/ShopWidget.h"
 
 void UMainHudWidget::NativeConstruct()
 {
@@ -21,6 +22,13 @@ void UMainHudWidget::NativeConstruct()
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
 			StaminaBar->RefreshWidget(resource->GetCurrentStamina(), resource->GetMaxStamina());
 		}
+	}
+
+	if (Inventory && Shop)
+	{
+		FScriptDelegate sellDelegate;
+		sellDelegate.BindUFunction(Inventory, "CloseDetailInfo");
+		Shop->AddToItemSellDelegate(sellDelegate);
 	}
 }
 

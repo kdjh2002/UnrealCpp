@@ -59,6 +59,7 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryC
 
 				slotWidget->OnSlotEnter.AddDynamic(this, &UInventoryWidget::OpenDetailInfo);
 				slotWidget->OnSlotLeave.AddDynamic(this, &UInventoryWidget::CloseDetailInfo);
+				slotWidget->OnDragDropCanceled.AddDynamic(this, &UInventoryWidget::CloseDetailInfo);
 
 				SlotWidgets.Add(slotWidget);	// 연결이 끝난 슬롯을 SlotWidgets에 순서대로 저장
 			}
@@ -99,6 +100,7 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 	{
 		//UE_LOG(LogTemp, Log, TEXT("인벤토리에 드랍 : 원래 슬롯(%d)으로 아이템이 돌아가야 한다."), invenOp->StartIndex);
 		TargetInventory->SetItemAtIndex(invenOp->StartIndex, invenOp->ItemData.Get(), invenOp->Count);
+		DetailInfoPanel->Close();
 		return true;
 	}
 	return false;
