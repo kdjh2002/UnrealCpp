@@ -111,7 +111,7 @@ void UInventoryWidget::OnCloseClicked()
 
 void UInventoryWidget::OpenDetailInfo(int InSlotIndex)
 {
-	UE_LOG(LogTemp, Log, TEXT("OpenDetailInfo : %d"), InSlotIndex);
+	//UE_LOG(LogTemp, Log, TEXT("OpenDetailInfo : %d"), InSlotIndex);
 	if (TargetInventory.IsValid())
 	{
 		DetailInfoPanel->Open(TargetInventory->GetSlotData(InSlotIndex)->ItemData);
@@ -120,6 +120,6 @@ void UInventoryWidget::OpenDetailInfo(int InSlotIndex)
 
 void UInventoryWidget::CloseDetailInfo()
 {
-	UE_LOG(LogTemp, Log, TEXT("CloseDetailInfo"));
+	//UE_LOG(LogTemp, Log, TEXT("CloseDetailInfo"));
 	DetailInfoPanel->Close();
 }
