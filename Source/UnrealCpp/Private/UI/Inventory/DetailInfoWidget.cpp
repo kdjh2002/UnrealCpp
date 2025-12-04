@@ -46,10 +46,6 @@ void UDetailInfoWidget::SetInfo(UItemDataAsset* InItemData)
 
 void UDetailInfoWidget::UpdateLocation()
 {
-	if (!PlayerController)
-	{
-		PlayerController = GetWorld()->GetFirstPlayerController();
-	}
 	FVector2D MousePosition = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
 	//SetPosition은 부모의 원점 기준 위치설정
 	CanvasSlot->SetPosition(MousePosition - ParentPosition);	//그래서 부모의 위치를 뺴서 뷰포트 기준의 위치로 변경
