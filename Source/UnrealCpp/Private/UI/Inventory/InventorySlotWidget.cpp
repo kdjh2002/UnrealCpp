@@ -238,9 +238,9 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-	//UE_LOG(LogTemp, Log, TEXT("OnMouseEnter : %d"), Index);
 	if (SlotData && !SlotData->IsEmpty())
 	{
+		//UE_LOG(LogTemp, Log, TEXT("OnMouseEnter : %d"), Index);
 		OnSlotEnter.Broadcast(Index);	// 슬롯에 데이터가 있을 때만 처리
 	}
 }
@@ -248,9 +248,9 @@ void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const
 void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
-	//UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d"), Index);
 	if (SlotData && !SlotData->IsEmpty())
 	{
+		//UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d"), Index);
 		OnSlotLeave.Broadcast();
 	}
 }
