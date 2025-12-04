@@ -5,8 +5,10 @@
 #include "UI/Inventory/InventorySlotWidget.h"
 #include "UI/Inventory/GoldPanelWidget.h"
 #include "UI/Inventory/InventoryDragDropOperation.h"
+#include "UI/Inventory/DetailInfoWidget.h"
 #include "Components/Button.h"
 #include "Components/UniformGridPanel.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Player/InventoryComponent.h"
 
 
@@ -22,6 +24,13 @@ void UInventoryWidget::NativeConstruct()
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
 {
+	if (DetailInfoPanel)
+	{
+		UCanvasPanelSlot* canvasSlot = Cast<UCanvasPanelSlot>(Slot);
+		//UE_LOG(LogTemp, Log, TEXT("ParentPosition : %s"), *canvasSlot->GetPosition().ToString());
+		DetailInfoPanel->SetParentPosition(canvasSlot->GetPosition());	// DetailInfoPanel에 인벤토리 위젯의 위치 알려주기
+	}
+
 	if (InventoryComponent && SlotGridPanel)
 	{
 		TargetInventory = InventoryComponent;	// 인벤토리 컴포넌트 저장
@@ -47,6 +56,9 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryC
 				// 인벤토리 컴포넌트에 저장되어있는 슬롯과 슬롯 위젯을 엮어주는 작업
 				UInventorySlotWidget* slotWidget = Cast<UInventorySlotWidget>(SlotGridPanel->GetChildAt(i));
 				slotWidget->InitializeSlot(TargetInventory.Get(), i);
+
+				slotWidget->OnSlotEnter.AddDynamic(this, &UInventoryWidget::OpenDetailInfo);
+				slotWidget->OnSlotLeave.AddDynamic(this, &UInventoryWidget::CloseDetailInfo);
 
 				SlotWidgets.Add(slotWidget);	// 연결이 끝난 슬롯을 SlotWidgets에 순서대로 저장
 			}
@@ -95,4 +107,19 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 void UInventoryWidget::OnCloseClicked()
 {
 	OnInventoryCloseRequested.Broadcast();	// 닫힘 버튼이 눌려졌음을 알리기만 함
+}
+
+void UInventoryWidget::OpenDetailInfo(int InSlotIndex)
+{
+	UE_LOG(LogTemp, Log, TEXT("OpenDetailInfo : %d"), InSlotIndex);
+	if (TargetInventory.IsValid())
+	{
+		DetailInfoPanel->Open(TargetInventory->GetSlotData(InSlotIndex)->ItemData);
+	}
+}
+
+void UInventoryWidget::CloseDetailInfo()
+{
+	UE_LOG(LogTemp, Log, TEXT("CloseDetailInfo"));
+	DetailInfoPanel->Close();
 }

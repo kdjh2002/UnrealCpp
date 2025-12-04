@@ -18,7 +18,7 @@ void UInventorySlotWidget::InitializeSlot(UInventoryComponent* InInventoryCompon
 		TargetInventory = InInventoryComponent;
 		Index = InIndex;
 		SlotData = TargetInventory->GetSlotData(InIndex);
-		OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");	// 인벤토리 컴포넌트에 있는 UseItem과 바인딩
+		OnSlotRightClick.BindUFunction(TargetInventory.Get(), "UseItem");	// 인벤토리 컴포넌트에 있는 UseItem과 바인딩		
 
 		RefreshSlot();
 	}
@@ -233,4 +233,24 @@ FReply UInventorySlotWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	}
 
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);	// 나는 처리안했다. 부모 or 다른 위젯이 처리할거다.
+}
+
+void UInventorySlotWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	//UE_LOG(LogTemp, Log, TEXT("OnMouseEnter : %d"), Index);
+	if (SlotData && !SlotData->IsEmpty())
+	{
+		OnSlotEnter.Broadcast(Index);	// 슬롯에 데이터가 있을 때만 처리
+	}
+}
+
+void UInventorySlotWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	//UE_LOG(LogTemp, Log, TEXT("OnMouseLeave : %d"), Index);
+	if (SlotData && !SlotData->IsEmpty())
+	{
+		OnSlotLeave.Broadcast();
+	}
 }

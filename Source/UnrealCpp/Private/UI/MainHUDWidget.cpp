@@ -15,9 +15,7 @@ void UMainHudWidget::NativeConstruct()
 	{
 		if (UResourceComponent* resource = player->GetResourceComponent())
 		{
-	
 			resource->OnHealthChanged.AddUObject(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
-			//resource->OnHealthChanged.AddDynamic(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
 			resource->OnStaminaChanged.AddDynamic(StaminaBar.Get(), &UResourceBarWidget::RefreshWidget);
 
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
@@ -28,7 +26,7 @@ void UMainHudWidget::NativeConstruct()
 
 void UMainHudWidget::OpenInventory()
 {
-	Inventory->RefreshInventoryWidget();	//열릴떄마다 UI내용 갱신
+	Inventory->RefreshInventoryWidget();	// 열릴때마다 UI 내용 갱신
 	Inventory->SetVisibility(ESlateVisibility::Visible);
 	OpenState = EOpenState::Open;
 }
@@ -37,5 +35,4 @@ void UMainHudWidget::CloseInventory()
 {
 	OpenState = EOpenState::Close;
 	Inventory->SetVisibility(ESlateVisibility::Hidden);
-
 }
