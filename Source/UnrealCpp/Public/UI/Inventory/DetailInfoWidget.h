@@ -19,6 +19,8 @@ class UNREALCPP_API UDetailInfoWidget : public UUserWidget
 
 public:
 	void Open(class UItemDataAsset* InItemData);
+
+	UFUNCTION()
 	void Close();
 
 	inline void SetParentPosition(const FVector2D& InPosition) { ParentPosition = InPosition; }

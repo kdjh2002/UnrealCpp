@@ -54,6 +54,7 @@ protected:
 };
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnInventorySlotChanged, int32, InIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventorySlotCleared);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryMoneyChanged, int32, CurrentMoney);
 
 //여러개의 아이템 슬롯을 가진다.
@@ -74,9 +75,11 @@ public:
 	//인벤토리에서 특정 슬롯에 변화가 있었을 떄 호출되는 델리게이트
 	FOnInventorySlotChanged OnInventorySlotChanged;
 
-	//인벤토리 내의 금액 변화가 있을 때 호출되는 델리게이트
-	FOnInventoryMoneyChanged OnInventoryMoneyChanged;
+	// 인벤토리에서 특정 슬롯이 비워졌을 때 호출되는 델리게이트
+	FOnInventorySlotCleared OnInventorySlotCleared;
 
+	// 인벤토리 내의 금액 변화가 있을 때 호출되는 델리게이트
+	FOnInventoryMoneyChanged OnInventoryMoneyChanged;
 
 public:	
 	//아이템을 추가하는 함수(리턴:못 먹은 아이템의 수, InItemData: 추가되는 아이템의 종류, InCount: 추가되는 아이템의 갯수)
@@ -142,7 +145,7 @@ private:
 
 	//같은 종류의 아이템이 있는 슬롯을 찾는 함수
 	//InItemData : 비교할 아이템의 종류, InstartIndex : 찾기 시작할 인덱스
-	int32 FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex = 0);
+	int32 FindSlotWithItem(const UItemDataAsset* InItemData, int32 InStartIndex = 0);
 	
 	//비어있는 슬롯을 찾는 함수
 	int32 FindEmptySlot();

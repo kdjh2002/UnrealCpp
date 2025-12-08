@@ -24,20 +24,21 @@ void UInventoryWidget::NativeConstruct()
 
 void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryComponent)
 {
+	TargetInventory = InventoryComponent;	//인벤토리 컴포넌트 저장
+	if (TargetInventory.IsValid())
+	{
+		UE_LOG(LogTemp, Log, TEXT("인벤토리 위젯 초기화"));
 	if (DetailInfoPanel)
 	{
 		UCanvasPanelSlot* canvasSlot = Cast<UCanvasPanelSlot>(Slot);
 		//UE_LOG(LogTemp, Log, TEXT("ParentPosition : %s"), *canvasSlot->GetPosition().ToString());
 		DetailInfoPanel->SetParentPosition(canvasSlot->GetPosition());	// DetailInfoPanel에 인벤토리 위젯의 위치 알려주기
+	
+		TargetInventory->OnInventorySlotCleared.AddDynamic(DetailInfoPanel, &UDetailInfoWidget::Close);
 	}
 
-	if (InventoryComponent && SlotGridPanel)
+	if (SlotGridPanel)
 	{
-		TargetInventory = InventoryComponent;	// 인벤토리 컴포넌트 저장
-		if (TargetInventory.IsValid())
-		{
-			UE_LOG(LogTemp, Log, TEXT("인벤토리 위젯 초기화"));
-
 			if (SlotGridPanel->GetChildrenCount() != TargetInventory->GetInventorySize())
 			{
 				UE_LOG(LogTemp, Error, TEXT("인벤토리 컴포넌트와 위젯의 슬롯 크기가 다릅니다!!!"));

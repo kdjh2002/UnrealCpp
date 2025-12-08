@@ -173,12 +173,12 @@ void AActionCharacter::AddMoney_Implementation(int32 Income)
 void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
 {
 	UE_LOG(LogTemp, Log, TEXT("돈 (%d) 골드를 사용했습니다."), Expense);
-
+	Inventory->AddMoney(-Expense);
 }
 
 bool AActionCharacter::HasEnoughMoney_Implementation(int32 Amount)
 {
-	return Amount < Inventory->GetMoney();
+	return Amount <= Inventory->GetMoney();
 }
 
 void AActionCharacter::HealHealth_Implementation(float InHeal)

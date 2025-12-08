@@ -59,7 +59,7 @@ void UShopItemListWidget::ResetItemList(UDataTable* ItemList)
 	for (int32 i = 0; i < selectCount; i++)
 	{
 		const FShopData_TableRow* row = selectedRows[i];
-		ShopItems[i]->SetItemData(row->ItemData, row->StockCount);
+		ShopItems[i]->InitializeItemBuy(row->ItemData, row->StockCount);
 	}
 }
 

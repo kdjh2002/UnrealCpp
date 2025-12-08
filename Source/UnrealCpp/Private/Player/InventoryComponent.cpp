@@ -100,12 +100,16 @@ void UInventoryComponent::SetItemAtIndex(int32 InSlotIndex, UItemDataAsset* InIt
 	{
 		FInvenSlot& TargetSlot = Slots[InSlotIndex];
 
-			TargetSlot.ItemData = InItemData;	//다시 널로 세팅
-			TargetSlot.SetCount(InCount);	//Incount가 0이하면 자동 Clear
+		TargetSlot.ItemData = InItemData;
+		TargetSlot.SetCount(InCount);	// InCount가 0이하면 자동 Clear
 
-			OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
+		OnInventorySlotChanged.ExecuteIfBound(InSlotIndex);
+
+		if (TargetSlot.IsEmpty())
+		{
+			OnInventorySlotCleared.Broadcast();
+		}
 	}
-
 }
 
 void UInventoryComponent::UpdateSlotCount(int32 InSlotIndex, int32 InDeltaCount)
@@ -146,7 +150,7 @@ FInvenSlot* UInventoryComponent::GetSlotData(int32 InSlotIndex)
 
 }
 
-int32 UInventoryComponent::FindSlotWithItem(UItemDataAsset* InItemData, int32 InStartIndex) 
+int32 UInventoryComponent::FindSlotWithItem(const UItemDataAsset* InItemData, int32 InStartIndex) 
 {
 	int32 result = UInventoryComponent::InventoryFail;	//-1은 실패했음을 알리는 값
 	int32 size = Slots.Num();

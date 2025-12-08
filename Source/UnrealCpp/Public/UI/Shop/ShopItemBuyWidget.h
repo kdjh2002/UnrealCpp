@@ -25,7 +25,8 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void SetItemData(const class UItemDataAsset* InItemData, int32 InStockCount);
+	//판매아이템 위젯 초기화
+	void InitializeItemBuy(class UItemDataAsset* InItemData, int32 InStockCount);
 
 	//버튼의 활성화 비활성화를 업데이트하는 함수
 	void UpdateBuyButton() const;
@@ -39,6 +40,11 @@ private:
 	UFUNCTION()
 	void OnBuyButtonClicked();
 
+	// StockCount의 값과 ItemStockCount를 동시에 세팅하는 함수
+	void SetStockCount(int32 InCount);
+
+	// BuyCount의 값과 ItemCount를 동시에 세팅하는 함수
+	void SetBuyCount(int32 InCount);
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Shop|ItemSell", meta = (BindWidget))
@@ -76,5 +82,5 @@ private:
 	int32 BuyCount = MinimumBuyCount;
 
 	//현재 사려고 하는 아이템의 데이터에셋 
-	TWeakObjectPtr<const UItemDataAsset>ItemData = nullptr;
+	TWeakObjectPtr<UItemDataAsset>ItemData = nullptr;
 };
