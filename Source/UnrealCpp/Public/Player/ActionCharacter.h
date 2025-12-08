@@ -43,6 +43,7 @@ public:
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
 	virtual void AddMoney_Implementation(int32 Income) override;
 	virtual void RemoveMoney_Implementation(int32 Expense) override;
+	virtual bool HasEnoughMoney_Implementation(int32 Amount) override;
 
 	//IHasHealth 
 	virtual void HealHealth_Implementation(float InHeal) override;

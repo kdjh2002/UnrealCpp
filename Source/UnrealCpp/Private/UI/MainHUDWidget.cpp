@@ -4,6 +4,7 @@
 #include "UI/MainHudWidget.h"
 #include "Player/ActionCharacter.h"
 #include "Player/ResourceComponent.h"
+#include "Player/InventoryComponent.h"
 #include "UI/ResourceBarWidget.h"
 #include "UI/Shop/ShopWidget.h"
 
@@ -16,16 +17,27 @@ void UMainHudWidget::NativeConstruct()
 	{
 		if (UResourceComponent* resource = player->GetResourceComponent())
 		{
-			resource->OnHealthChanged.AddUObject(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);
+			//리소스 컴포넌트에서 HP와 스테미너의 변화가 있을 떄 UI 업데이트
+			resource->OnHealthChanged.AddUObject(HealthBar.Get(), &UResourceBarWidget::RefreshWidget);	//예시용
 			resource->OnStaminaChanged.AddDynamic(StaminaBar.Get(), &UResourceBarWidget::RefreshWidget);
 
 			HealthBar->RefreshWidget(resource->GetCurrentHealth(), resource->GetMaxHealth());
 			StaminaBar->RefreshWidget(resource->GetCurrentStamina(), resource->GetMaxStamina());
 		}
+
+		if (UInventoryComponent* inventoryComponent = player->GetInventoryComponent())
+		{
+			if (Shop)
+			{
+				//인벤토리 컴포넌트에서 돈의 변화가 있으면 상점 아이템 리스트의 구매버튼 상태를 변경한다.
+				inventoryComponent->OnInventoryMoneyChanged.AddDynamic(Shop, &UShopWidget::UpdateAllBuyButtonState);
+			}
+		}
 	}
 
 	if (Inventory && Shop)
 	{
+		//상점위젯에서 아이템 판매가 일어났으면 인벤토리 위젯의 상세정보 닫기
 		FScriptDelegate sellDelegate;
 		sellDelegate.BindUFunction(Inventory, "CloseDetailInfo");
 		Shop->AddToItemSellDelegate(sellDelegate);

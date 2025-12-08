@@ -176,6 +176,11 @@ void AActionCharacter::RemoveMoney_Implementation(int32 Expense)
 
 }
 
+bool AActionCharacter::HasEnoughMoney_Implementation(int32 Amount)
+{
+	return Amount < Inventory->GetMoney();
+}
+
 void AActionCharacter::HealHealth_Implementation(float InHeal)
 {
 	if (Resource)

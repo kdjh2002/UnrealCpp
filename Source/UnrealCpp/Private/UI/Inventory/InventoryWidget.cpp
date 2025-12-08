@@ -44,7 +44,7 @@ void UInventoryWidget::InitializeInventoryWidget(UInventoryComponent* InventoryC
 				return;
 			}
 
-			TargetInventory->OnInventoryMoneyChanged.BindUFunction(this, "RefreshMoneyPanel");
+			TargetInventory->OnInventoryMoneyChanged.AddDynamic(this, &UInventoryWidget::RefreshMoneyPanel);
 			TargetInventory->OnInventorySlotChanged.BindUFunction(this, "RefreshSlotWidget");
 
 			RefreshMoneyPanel(0);
