@@ -9,6 +9,7 @@
 #include "Player/InventoryOwner.h"
 #include "Player/HasHealth.h"
 #include "Player/HasStamina.h"
+#include "Player/Interactor.h"
 #include "ActionCharacter.generated.h"	//ㅁㅈㄱ 마지막
 
 
@@ -19,7 +20,8 @@ class UStatusComponent;
 class UInventoryComponent;
 
 UCLASS()
-class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, public IHasHealth, public IHasStamina
+class UNREALCPP_API AActionCharacter : public ACharacter, public IInventoryOwner, 
+	public IHasHealth, public IHasStamina, public IInteractor
 {
 	GENERATED_BODY()
 
@@ -38,36 +40,38 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// 아이템 추가 인터페이스 함수 구현
+	// IInventoryOwner 인터페이스 함수 구현
 	virtual void AddItem_Implementation(UItemDataAsset* ItemData, int32 ItemCount) override;
 	virtual void AddWeapon_Implementation(EWeaponCode Code, int32 UseCount) override;
 	virtual void AddMoney_Implementation(int32 Income) override;
 	virtual void RemoveMoney_Implementation(int32 Expense) override;
 	virtual bool HasEnoughMoney_Implementation(int32 Amount) override;
 
-	//IHasHealth 
+	// IHasHealth 인터페이스 함수 구현
 	virtual void HealHealth_Implementation(float InHeal) override;
 	virtual void DamageHealth_Implementation(float InDamage) override;
 
-	//IHasStamina인터페이스 함수 구현
+	// IHasStamina 인터페이스 함수 구현
 	virtual void RecoveryStamina_Implementation(float InRecovery) override;
 
+	// IInteractor 인터페이스 함수 구현
+	virtual void AddInteractionTarget_Implementation(AActor* InTarget) override;
+	virtual void ClearInteractionTarget_Implementation(AActor* InTarget) override;
+	virtual void TryInteraction_Implementation() override;
 
 	// 무기를 장비하는 함수
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void EquipWeapon(EWeaponCode WeaponCode);
 
-
-	//노티파이가 공격을 가능하게 만들라는 신호가 왔을떄 실행될 함수
+	// 노티파이가 공격을 가능하게 만들라는 신호가 왔을 때 실행될 함수
 	void OnAttackEnable(bool bEnable);
 
-	//노티파이어가 무기의 트레일을 표시하라고 신호가 왔을 떄 실행될 함수->WeaponTrail
+	// 노티파이가 무기의 트레일을 표시하라고 신호가 왔을 때 실행될 함수
 	void OnWeaponTrailEnable(bool bEnable);
 
 	// 노티파이가 범위 공격을 하라고 신호가 왔을 때 실행될 함수
 	void OnAreaAttack();
 
-	
 	UResourceComponent* GetResourceComponent() const { return Resource; }
 	UStatusComponent* GetStatusComponent() const { return Status; }
 
@@ -76,175 +80,142 @@ public:
 
 	inline void SetSectionJumpNotify(UAnimNotifyState_SectionJump* InSectionJumpNotify)
 	{
-		SectionJumpNotify = InSectionJumpNotify;		//콤보 하나만될때 결정적 오류 주의
+		SectionJumpNotify = InSectionJumpNotify;
 		bComboReady = InSectionJumpNotify != nullptr;
 	}
 
-	//테스트용 함수
+	// 테스트용 함수
 	UFUNCTION(BlueprintCallable)
 	void TestDropUsedWeapon();
 
 	UFUNCTION(BlueprintCallable)
 	void TestDropCurrentWeapon();
 
-
 protected:
-	//입력 방향 입력 받기
+	// 이동 방향 입력 받기
 	void OnMoveInput(const FInputActionValue& InValue);
 
-	//구르기 입력 받기
+	// 구르기 입력 받기
 	void OnRollInput(const FInputActionValue& InValue);
 
-	//공격 입력받기
+	// 공격 입력 받기
 	void OnAttackInput(const FInputActionValue& InValue);
 
-	//발차기 입력받기
-	void OnKickInput(const FInputActionValue& InValue);
+	// 상호작용 입력 받기
+	void OnInteractionInput(const FInputActionValue& InValue);
 
-	//달리기 모드 설정
+	// 달리기 모드 설정
 	void SetSprintMode();
 
-
-	//걷기 모드 설정(다이나믹에서 )
+	// 걷기 모드 설정(다이나믹 델리게이트에 바인드하기 위해 UFUNCTION 추가)
 	UFUNCTION()
 	void SetWalkMode();
 
-	
-	//걷기 모드 설정(다이나믹에서 )
 	UFUNCTION()
 	void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
-	//스테미너 확인
-	//void CheckMove();
-	//-----------------------------------
 private:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	//콤보용 섹션 점프 함수
+	// 콤보용 섹션 점프 함수
 	void SectionJumpForCombo();
 
-	//달리기용 스테미너 소비함수
+	// 달리기용 스태미너 소비 함수
 	void SpendRunStamina(float DeltaTime);
 
 	// 다 쓴 무기를 버리는 함수
 	void DropWeapon(EWeaponCode WeaponCode);
 
-	//사용 중이던 무기를 버리는 함수
+	// 사용 중이던 무기를 버리는 함수
 	void DropCurrentWeapon(EWeaponCode WeaponCode);
 
+	// 이 캐릭터와 타겟들간의 거리를 확인해서 true면 InTarget2가 더 가깝고 false면 InTarget1이 더 가깝다.
+	bool IsChangeOrder(AActor* InTarget1, AActor* InTarget2);
+
+	// 매 틱마다 상호작용 대상의 순서를 조정하는 함수
+	void UpdateInteractionTargetOrder();
 
 protected:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Camera")
 	TObjectPtr<class UCameraComponent> PlayerCamera = nullptr;
-	//TObjectPtr<USpringArmComponent> a = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	TObjectPtr<class UResourceComponent> Resource = nullptr;
-	
-	////실습 - statusComponent
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Status")
 	TObjectPtr<class UStatusComponent> Status = nullptr;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
 	TObjectPtr<USceneComponent> DropLocation = nullptr;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon")
 	TObjectPtr<class UWeaponManagerComponent> WeaponManager = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Inventory")
-	TObjectPtr<class UInventoryComponent> Inventory = nullptr; //실질적 정보
+	TObjectPtr<class UInventoryComponent> Inventory = nullptr;
 
 
-	//IA_인풋 액션들 
+	// 인풋 액션들
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction>IA_Move = nullptr;
-
+	TObjectPtr<UInputAction> IA_Move = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction>IA_Sprint = nullptr;
-
+	TObjectPtr<UInputAction> IA_Sprint = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction>IA_Roll = nullptr;
+	TObjectPtr<UInputAction> IA_Roll = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> IA_Attack = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction> IA_Kick = nullptr;
+	TObjectPtr<UInputAction> IA_Interaction = nullptr;
 
-	//---------------------------------------------------
-
-	//달리기 속도
+	// 달리기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
-	float SprintSpeed = 1200.0f;//BS_Move에서 그래프 최대 길이로 맞추기
-	//걷기 속도
+	float SprintSpeed = 1200.0f;
+	// 걷기 속도
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Movement")
-	float WalkSpeed = 600.0f;//BS_Move에서 그래프 반길이로 맞춤
+	float WalkSpeed = 600.0f;
 
-	//----------------------------------------------------------------
-	//구르기 몽타주
+	// 구르기 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
-	//UAnimMontage* //이것도 가능
-	TObjectPtr<UAnimMontage>RollMontage = nullptr;
+	TObjectPtr<UAnimMontage> RollMontage = nullptr;
 
-	//공격 몽타주
+	// 공격 몽타주
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
-	//UAnimMontage* //이것도 가능
-	TObjectPtr<UAnimMontage>AttackMontage = nullptr;
+	TObjectPtr<UAnimMontage> AttackMontage = nullptr;
 
-	//킥 몽타주
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Montage")
-	//UAnimMontage* //이것도 가능
-	TObjectPtr<UAnimMontage>KickMontage = nullptr;
-
-	//---------------------------------------------------
-
-	//달리기 상태일 떄 초당 스테미너 비용
+	// 달리기 상태일 때 초당 스태미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float SprintStaminaCost = 20.0f;
 
-	//달리기 상태일 떄 초당 스테미너 비용
+	// 구르기를 하기 위해 필요한 스태미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float RollStaminaCost = 50.0f;
-
 
 	// 공격을 하기 위해 필요한 스태미너 비용
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
 	float AttackStaminaCost = 15.0f;
 
-	// 킥을 하기 위해 필요한 스태미너 비용
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Player|Resource")
-	//float KickStaminaCost = 20.0f;
-
-	//움직이기 T/F
+	// 플레이어가 뛰고 있는 중인지 표시 해놓은 변수
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|State")
-	bool bIsSprint = false;//canmove가 True여야 가능
+	bool bIsSprint = false;
 
-	//플레이어가 현재 가지고 있는 무기
+	// 플레이어가 현재 가지고 있는 무기
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Player|Weapon")
-	TWeakObjectPtr<class AWeaponActor>CurrentWeapon = nullptr;
+	TWeakObjectPtr<class AWeaponActor> CurrentWeapon = nullptr;
 
-
-	//----------------------------------------------------
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	//AWeaponActor* Weapon;
-
-
-	//---------------------------------------------------
 private:
 	UPROPERTY()
-	TWeakObjectPtr<UAnimInstance>AnimInstance = nullptr;
+	TWeakObjectPtr<UAnimInstance> AnimInstance = nullptr;
 
-	//현재 진행중인 섹션점프 노티파이 스테이트
-	//점프콤보
+	// 현재 진행중인 섹션점프 노티파이 스테이트
 	UPROPERTY()
 	TWeakObjectPtr<UAnimNotifyState_SectionJump> SectionJumpNotify;
-	//헤더 넣어줌
 
-	////플레이어가 현재 가지고 있는지 아닌지
+	// AllowPrivateAccess 확인용
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player|Weapon", meta = (AllowPrivateAccess = "true"))
 	//bool bWeaponUseEnded = false;
 
-	//콤보가 가능한 상황인지 확인하기 위한 플래그
+	// 콤보가 가능한 상황인지 확인하기 위한 플래그
 	bool bComboReady = false;
 
+	// 상호작용 대상
+	UPROPERTY(VisibleAnywhere)
+	TArray<TWeakObjectPtr<AActor>> InteractionTargets;
 };

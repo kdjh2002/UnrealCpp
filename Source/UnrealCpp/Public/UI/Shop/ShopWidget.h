@@ -18,13 +18,15 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	void InitializeShop(UDataTable* ItemList);
+
 	void AddToItemSellDelegate(const FScriptDelegate& Delegate);
 
 	UFUNCTION()
 	void UpdateAllBuyButtonState(int32 _);
 
 protected:
-	void RestShopItemListWidget();
+	void ResetShopItemListWidget();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Shop|Sell", meta = (BindWidget));

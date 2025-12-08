@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "NPC/Interactable.h"
 #include "Merchant.generated.h"
 
 UCLASS()
-class UNREALCPP_API AMerchant : public ACharacter
+class UNREALCPP_API AMerchant : public ACharacter, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -19,11 +20,32 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+	virtual void OnInteraction_Implementation() override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+protected:
+	UFUNCTION()
+	void OnInteractionBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION()
+	void OnInteractionEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UWidgetComponent> TextWidgetComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class USphereComponent> InteractionBound = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<class UCameraComponent> LookCamera = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NPC|Data")
+	TObjectPtr<UDataTable> ItemList = nullptr;
 
 };

@@ -8,7 +8,13 @@
 void UShopWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	RestShopItemListWidget();
+	ResetShopItemListWidget();
+}
+
+void UShopWidget::InitializeShop(UDataTable* ItemList)
+{
+	ShopItemList = ItemList;
+	ResetShopItemListWidget();
 }
 
 void UShopWidget::AddToItemSellDelegate(const FScriptDelegate& Delegate)
@@ -28,7 +34,7 @@ void UShopWidget::UpdateAllBuyButtonState(int32 _)
 }
 
 
-void UShopWidget::RestShopItemListWidget()
+void UShopWidget::ResetShopItemListWidget()
 {
 	if (ShopItemList.IsValid())
 	{
