@@ -473,6 +473,10 @@ void AActionCharacter::UpdateInteractionTargetOrder()
 				InteractionTargets[i - 1] = InteractionTargets[i].Get();
 				InteractionTargets[i] = temp;
 			}
+			else
+			{
+				break; //변경되지 않았다 = 적절한 위치다 = 그만 확인해도 된다.
+			}
 		}
 	}
 }

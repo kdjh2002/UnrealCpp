@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Inventory/InventoryWidget.h"
+#include "UI/Shop/ShopWidget.h"
 #include "MainHudWidget.generated.h"
 
 UENUM(BlueprintType)
@@ -45,7 +46,15 @@ public:
 		}
 	}
 
-	inline EOpenState GetOpenState() const { return OpenState; }
+	void AddToShopCloseDelegate(const FScriptDelegate& Delegate)
+	{
+		if (Shop)
+		{
+			Shop->OnShopCloseRequested.Add(Delegate);
+		}
+	}
+
+	inline EOpenState GetOpenState() const { return InventoryState; }
 	inline UInventoryWidget* GetInventoryWidget() const { return Inventory; }
 
 protected:
@@ -64,5 +73,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Shop", meta = (BindWidget))
 	TObjectPtr<class UShopWidget> Shop = nullptr;
 private:
-	EOpenState OpenState = EOpenState::Close;
+	EOpenState InventoryState = EOpenState::Close;
+	EOpenState ShopState = EOpenState::Close;
 };
