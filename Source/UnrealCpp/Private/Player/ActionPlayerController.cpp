@@ -140,7 +140,7 @@ void AActionPlayerController::CloseInventoryWidget()
 
 void AActionPlayerController::OpenShopWidget(AMerchant* TargetMerchant)
 {
-	if (MainHudWidget.IsValid())
+	if (MainHudWidget.IsValid() && !MainHudWidget)
 	{
 		UE_LOG(LogTemp, Log, TEXT("OpenShopWidget"));
 		MainHudWidget->OpenInventory();

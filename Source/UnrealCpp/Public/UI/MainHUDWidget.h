@@ -54,8 +54,12 @@ public:
 		}
 	}
 
-	inline EOpenState GetOpenState() const { return InventoryState; }
+		inline EOpenState GetInventoryState() const { return InventoryState; }
+	inline EOpenState GetShopState() const { return ShopState; }
 	inline UInventoryWidget* GetInventoryWidget() const { return Inventory; }
+
+	inline bool IsInventoryOpen const{ return InventoryState == EOepnState::Open; }
+	inline bool IsInventoryOpen const{ return InventoryState == EOepnState::Open; }
 
 protected:
 	// meta = (BindWidget)
